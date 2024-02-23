@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MemoryBotController implements BotController {
+
     private final ConcurrentHashMap<Long, HashSet<Link>> usersLinks;
 
     public MemoryBotController() {

@@ -1,9 +1,9 @@
 package edu.java.bot.processors;
 
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.commands.Command;
 import edu.java.bot.util.TextHandler;
+import edu.java.bot.wrapper.SendMessageWrapper;
+import edu.java.bot.wrapper.UpdateWrapper;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,32 +25,20 @@ public class NotifyBotUserMessageProcessor implements UserMessageProcessor {
     }
 
     @Override
-    public SendMessage process(Update update) {
-        if (update.message() != null && update.message().text() != null) {
-            int indexOfSpace = update.message().text().indexOf(' ');
-            String inputCommand;
-            if (indexOfSpace != -1) {
-                inputCommand = update.message().text().substring(0, indexOfSpace + 1).trim();
-            } else {
-                inputCommand = update.message().text();
-            }
-            if (inputCommand.charAt(0) == '/') {
-                for (Command command : commands()) {
-                    if (inputCommand.equals(command.command())) {
-                        return command.handle(update);
-                    }
-                }
-            }
-        }
-        if (update.message() != null) {
-            if (update.message().chat() == null) {
-                return null;
-            } else {
-                return new SendMessage(
+    public SendMessageWrapper process(UpdateWrapper update) {
+        if (update.message() != null && update.message().text() != null && update.message().chat() != null) {
+            String inputCommand =
+                GetCommandByUpdate.getInputCommandFromInputMessageText(update.message().text());
+
+            Command command = GetCommandByUpdate.getCommandFromInputCommand(inputCommand, commands());
+
+            if (command == null) {
+                return new SendMessageWrapper(
                     update.message().chat().id(),
                     String.format(handler.handle("message.unknown_command"), update.message().text())
                 );
             }
+            return command.handle(update);
         }
         return null;
     }

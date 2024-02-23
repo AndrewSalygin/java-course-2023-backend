@@ -1,15 +1,15 @@
 package edu.java.bot.commands;
 
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.model.BotController;
 import edu.java.bot.model.Link;
 import edu.java.bot.util.TextHandler;
+import edu.java.bot.wrapper.SendMessageWrapper;
+import edu.java.bot.wrapper.UpdateWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import static edu.java.bot.Utils.createMockUpdate;
+import static edu.java.bot.Utils.createMockUpdateWrapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UntrackCommandTest {
@@ -34,8 +34,8 @@ public class UntrackCommandTest {
             .thenReturn("The link: %s is now untraceable");
 
         Mockito.when(botController.unTrackUserLink(1L, new Link("https://example.com"))).thenReturn(true);
-        Update update = createMockUpdate("/untrack https://example.com", 1L);
-        SendMessage sendMessage = untrackCommand.handle(update);
+        UpdateWrapper update = createMockUpdateWrapper("/untrack https://example.com", 1L);
+        SendMessageWrapper sendMessage = untrackCommand.handle(update);
         assertEquals("The link: https://example.com is now untraceable", sendMessage.getParameters()
             .get("text"));
     }
@@ -47,8 +47,8 @@ public class UntrackCommandTest {
             .thenReturn("The link: %s is not tracked");
 
         Mockito.when(botController.unTrackUserLink(1L, new Link("https://example.com"))).thenReturn(false);
-        Update update = createMockUpdate("/untrack https://example.com", 1L);
-        SendMessage sendMessage = untrackCommand.handle(update);
+        UpdateWrapper update = createMockUpdateWrapper("/untrack https://example.com", 1L);
+        SendMessageWrapper sendMessage = untrackCommand.handle(update);
         assertEquals("The link: https://example.com is not tracked", sendMessage.getParameters().get("text"));
     }
 
@@ -58,8 +58,8 @@ public class UntrackCommandTest {
         Mockito.when(textHandler.handle("message.invalid_argument"))
             .thenReturn("Invalid argument: %s");
 
-        Update update = createMockUpdate("/untrack wefwe", 1L);
-        SendMessage sendMessage = untrackCommand.handle(update);
+        UpdateWrapper update = createMockUpdateWrapper("/untrack wefwe", 1L);
+        SendMessageWrapper sendMessage = untrackCommand.handle(update);
         assertEquals("Invalid argument: wefwe", sendMessage.getParameters().get("text"));
     }
 
@@ -69,8 +69,8 @@ public class UntrackCommandTest {
         Mockito.when(textHandler.handle("message.empty_argument"))
             .thenReturn("Empty argument");
 
-        Update update = createMockUpdate("/untrack", 1L);
-        SendMessage sendMessage = untrackCommand.handle(update);
+        UpdateWrapper update = createMockUpdateWrapper("/untrack", 1L);
+        SendMessageWrapper sendMessage = untrackCommand.handle(update);
         assertEquals("Empty argument", sendMessage.getParameters().get("text"));
     }
 }

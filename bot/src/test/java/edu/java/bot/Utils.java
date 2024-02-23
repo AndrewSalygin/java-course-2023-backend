@@ -3,29 +3,35 @@ package edu.java.bot;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import edu.java.bot.wrapper.ChatWrapper;
+import edu.java.bot.wrapper.MessageWrapper;
+import edu.java.bot.wrapper.UpdateWrapper;
 import org.mockito.Mockito;
 
 public class Utils {
 
-    public static Update createMockUpdate() {
-        Update update = Mockito.mock(Update.class);
-        Message message = Mockito.mock(Message.class);
+    public static UpdateWrapper createMockUpdateWrapper() {
+        UpdateWrapper update = Mockito.mock(UpdateWrapper.class);
+        MessageWrapper message = Mockito.mock(MessageWrapper.class);
+
         Mockito.when(update.message()).thenReturn(message);
         return update;
     }
 
-    public static Update createMockUpdate(String text) {
-        Update update = Mockito.mock(Update.class);
-        Message message = Mockito.mock(Message.class);
+    public static UpdateWrapper createMockUpdateWrapper(String text) {
+        UpdateWrapper update = Mockito.mock(UpdateWrapper.class);
+        MessageWrapper message = Mockito.mock(MessageWrapper.class);
+
         Mockito.when(message.text()).thenReturn(text);
         Mockito.when(update.message()).thenReturn(message);
         return update;
     }
 
-    public static Update createMockUpdate(String text, Long chatId) {
-        Update update = Mockito.mock(Update.class);
-        Message message = Mockito.mock(Message.class);
-        Chat chat = Mockito.mock(Chat.class);
+    public static UpdateWrapper createMockUpdateWrapper(String text, Long chatId) {
+        UpdateWrapper update = Mockito.mock(UpdateWrapper.class);
+        MessageWrapper message = Mockito.mock(MessageWrapper.class);
+        ChatWrapper chat = Mockito.mock(ChatWrapper.class);
+
         Mockito.when(message.text()).thenReturn(text);
         Mockito.when(message.chat()).thenReturn(chat);
         Mockito.when(message.chat().id()).thenReturn(chatId);

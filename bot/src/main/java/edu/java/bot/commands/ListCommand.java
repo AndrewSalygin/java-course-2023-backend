@@ -1,10 +1,10 @@
 package edu.java.bot.commands;
 
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.model.BotController;
 import edu.java.bot.model.Link;
 import edu.java.bot.util.TextHandler;
+import edu.java.bot.wrapper.SendMessageWrapper;
+import edu.java.bot.wrapper.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,18 +27,16 @@ public class ListCommand extends AbstractCommand {
     }
 
     @Override
-    public SendMessage handle(Update update) {
+    public SendMessageWrapper handle(UpdateWrapper update) {
         Long chatId = update.message().chat().id();
-        if (!botController.isUserRegistered(chatId)) {
-            botController.registerUser(chatId);
-        }
+        botController.registerUser(chatId);
         if (botController.userLinks(chatId).isEmpty()) {
-            return new SendMessage(chatId, handler.handle("command.list.empty"));
+            return new SendMessageWrapper(chatId, handler.handle("command.list.empty"));
         }
         StringBuilder linksString = new StringBuilder();
         for (Link link : botController.userLinks(chatId)) {
             linksString.append(link.url()).append("\n");
         }
-        return new SendMessage(chatId, String.format(handler.handle("command.list.show"), linksString));
+        return new SendMessageWrapper(chatId, String.format(handler.handle("command.list.show"), linksString));
     }
 }

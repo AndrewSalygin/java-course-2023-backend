@@ -1,9 +1,9 @@
 package edu.java.bot.commands;
 
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.model.BotController;
 import edu.java.bot.util.TextHandler;
+import edu.java.bot.wrapper.SendMessageWrapper;
+import edu.java.bot.wrapper.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,14 +26,14 @@ public class StartCommand extends AbstractCommand {
     }
 
     @Override
-    public SendMessage handle(Update update) {
+    public SendMessageWrapper handle(UpdateWrapper update) {
         Long chatId = update.message().chat().id();
 
         if (!botController.isUserRegistered(chatId)) {
             botController.registerUser(chatId);
-            return new SendMessage(chatId, handler.handle("command.start.first_hello_message"));
+            return new SendMessageWrapper(chatId, handler.handle("command.start.first_hello_message"));
         } else {
-            return new SendMessage(chatId, handler.handle("command.start.hello_message"));
+            return new SendMessageWrapper(chatId, handler.handle("command.start.hello_message"));
         }
     }
 }

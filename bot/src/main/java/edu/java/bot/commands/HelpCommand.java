@@ -1,9 +1,9 @@
 package edu.java.bot.commands;
 
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.model.BotController;
 import edu.java.bot.util.TextHandler;
+import edu.java.bot.wrapper.SendMessageWrapper;
+import edu.java.bot.wrapper.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ public class HelpCommand extends AbstractCommand {
     }
 
     @Override
-    public SendMessage handle(Update update) {
-        return new SendMessage(update.message().chat().id(), handler.handle("command.help.list_of_commands"));
+    public SendMessageWrapper handle(UpdateWrapper update) {
+        return new SendMessageWrapper(update.message().chat().id(), handler.handle("command.help.list_of_commands"));
     }
 }

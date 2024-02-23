@@ -1,13 +1,13 @@
 package edu.java.bot.commands;
 
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.model.BotController;
 import edu.java.bot.util.TextHandler;
+import edu.java.bot.wrapper.SendMessageWrapper;
+import edu.java.bot.wrapper.UpdateWrapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import static edu.java.bot.Utils.createMockUpdate;
+import static edu.java.bot.Utils.createMockUpdateWrapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HelpCommandTest {
@@ -29,8 +29,8 @@ public class HelpCommandTest {
     public void handleReturnHelpMessageTest() {
         Mockito.when(textHandler.handle("command.help.list_of_commands")).thenReturn("Help");
 
-        Update update = createMockUpdate("/help", 1L);
-        SendMessage sendMessage = helpCommand.handle(update);
+        UpdateWrapper update = createMockUpdateWrapper("/help", 1L);
+        SendMessageWrapper sendMessage = helpCommand.handle(update);
         assertEquals("Help", sendMessage.getParameters().get("text"));
     }
 }

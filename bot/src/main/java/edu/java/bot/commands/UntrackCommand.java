@@ -1,11 +1,11 @@
 package edu.java.bot.commands;
 
-import com.pengrad.telegrambot.model.Update;
-import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.model.BotController;
 import edu.java.bot.model.Link;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.util.URLChecker;
+import edu.java.bot.wrapper.SendMessageWrapper;
+import edu.java.bot.wrapper.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,39 +28,39 @@ public class UntrackCommand extends AbstractCommand {
     }
 
     @Override
-    public SendMessage handle(Update update) {
+    public SendMessageWrapper handle(UpdateWrapper update) {
         Long chatId = update.message().chat().id();
-        if (!botController.isUserRegistered(chatId)) {
-            botController.registerUser(chatId);
+        botController.registerUser(chatId);
+        String[] elements = update.message().text().split(" ");
+
+        if (isEmptyArgument(elements)) {
+            return new SendMessageWrapper(
+                chatId,
+                handler.handle("message.empty_argument")
+            );
         }
-        String argument = update.message().text().replace("/untrack ", "");
-        argument = argument.replace(command(), "");
+
         Link link;
-        SendMessage sendMessage;
-        if (argument.isEmpty()) {
-            sendMessage = new SendMessage(
-                chatId,
-                String.format(handler.handle("message.empty_argument"), argument)
-            );
-        } else if (URLChecker.isURL(argument)) {
-            link = new Link(argument);
-            if (botController.unTrackUserLink(chatId, link)) {
-                sendMessage = new SendMessage(
-                    chatId,
-                    String.format(handler.handle("command.untrack.successful_untrack"), link.url())
-                );
-            } else {
-                sendMessage = new SendMessage(
-                    chatId,
-                    String.format(handler.handle("command.untrack.not_tracked"), link.url())
-                );
+        StringBuilder answerString = new StringBuilder();
+        for (int i = 1; i < elements.length; i++) {
+            if (!elements[i].isEmpty()) {
+                link = new Link(elements[i]);
+                answerString.append(getAnswerForLink(link, chatId)).append('\n');
             }
-        } else {
-            sendMessage = new SendMessage(
-                chatId,
-                String.format(handler.handle("message.invalid_argument"), argument)
-            );
         }
-        return sendMessage;
+        answerString.deleteCharAt(answerString.length() - 1);
+
+        return new SendMessageWrapper(chatId, answerString.toString());
+    }
+
+    private String getAnswerForLink(Link link, Long chatId) {
+        if (!URLChecker.isURL(link.url())) {
+            if (!link.url().isEmpty()) {
+                return String.format(handler.handle("message.invalid_argument"), link.url());
+            }
+        } else if (botController.unTrackUserLink(chatId, link)) {
+            return String.format(handler.handle("command.untrack.successful_untrack"), link.url());
+        }
+        return String.format(handler.handle("command.untrack.not_tracked"), link.url());
     }
 }
