@@ -1,6 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotController;
+import edu.java.bot.model.BotService;
 import edu.java.bot.model.Link;
 import edu.java.bot.util.TextHandler;
 import java.util.List;
@@ -17,15 +17,15 @@ public class ListCommandTest {
 
     static ListCommand listCommand;
 
-    static BotController botController;
+    static BotService botService;
 
     static TextHandler textHandler;
 
     @BeforeEach
     public void setUp() {
         textHandler = Mockito.mock(TextHandler.class);
-        botController = Mockito.mock(BotController.class);
-        listCommand = new ListCommand(textHandler, botController);
+        botService = Mockito.mock(BotService.class);
+        listCommand = new ListCommand(textHandler, botService);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ListCommandTest {
     @DisplayName("Displaying tracked links")
     public void handleReturnNotEmptyListMessageTest() {
         Mockito.when(textHandler.handle("command.list.show")).thenReturn("Your tracked links:\n %s");
-        Mockito.when(botController.userLinks(1L))
+        Mockito.when(botService.userLinks(1L))
             .thenReturn(List.of(new Link("http://example.com"), new Link("https://example.com")));
 
         UpdateWrapper update = createMockUpdateWrapper("/list", 1L);
@@ -52,6 +52,6 @@ public class ListCommandTest {
             "Your tracked links:\n http://example.com\nhttps://example.com\n",
             sendMessage.getParameters().get("text")
         );
-        Mockito.verify(botController, Mockito.times(2)).userLinks(1L);
+        Mockito.verify(botService, Mockito.times(2)).userLinks(1L);
     }
 }

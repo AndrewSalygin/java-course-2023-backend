@@ -2,7 +2,6 @@ package edu.java.bot.configuration;
 
 import edu.java.bot.wrapper.TelegramBotWrapper;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -16,7 +15,7 @@ public class BeansConfiguration {
     }
 
     @Bean
-    public MessageSource messageSourceResourceBundle() {
+    public ResourceBundleMessageSource messageSourceResourceBundle() {
         ResourceBundleMessageSource messageSourceResourceBundle = new ResourceBundleMessageSource();
         YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
         yamlPropertiesFactoryBean.setResources(new ClassPathResource("messages.yml"));

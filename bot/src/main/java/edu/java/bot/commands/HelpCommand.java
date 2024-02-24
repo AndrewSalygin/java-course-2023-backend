@@ -1,6 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotController;
+import edu.java.bot.model.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.SendMessageWrapper;
 import edu.java.bot.wrapper.UpdateWrapper;
@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 public class HelpCommand extends AbstractCommand {
 
     @Autowired
-    public HelpCommand(TextHandler handler, BotController botController) {
-        super(handler, botController);
+    public HelpCommand(TextHandler handler, BotService botService) {
+        super(handler, botService);
     }
 
     @Override

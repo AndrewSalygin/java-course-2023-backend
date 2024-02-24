@@ -1,6 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotController;
+import edu.java.bot.model.BotService;
 import edu.java.bot.model.Link;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.SendMessageWrapper;
@@ -16,15 +16,15 @@ public class UntrackCommandTest {
 
     static UntrackCommand untrackCommand;
 
-    static BotController botController;
+    static BotService botService;
 
     static TextHandler textHandler;
 
     @BeforeEach
     public void setUp() {
         textHandler = Mockito.mock(TextHandler.class);
-        botController = Mockito.mock(BotController.class);
-        untrackCommand = new UntrackCommand(textHandler, botController);
+        botService = Mockito.mock(BotService.class);
+        untrackCommand = new UntrackCommand(textHandler, botService);
     }
 
     @Test
@@ -33,7 +33,7 @@ public class UntrackCommandTest {
         Mockito.when(textHandler.handle("command.untrack.successful_untrack"))
             .thenReturn("The link: %s is now untraceable");
 
-        Mockito.when(botController.unTrackUserLink(1L, new Link("https://example.com"))).thenReturn(true);
+        Mockito.when(botService.unTrackUserLink(1L, new Link("https://example.com"))).thenReturn(true);
         UpdateWrapper update = createMockUpdateWrapper("/untrack https://example.com", 1L);
         SendMessageWrapper sendMessage = untrackCommand.handle(update);
         assertEquals("The link: https://example.com is now untraceable", sendMessage.getParameters()
@@ -46,7 +46,7 @@ public class UntrackCommandTest {
         Mockito.when(textHandler.handle("command.untrack.not_tracked"))
             .thenReturn("The link: %s is not tracked");
 
-        Mockito.when(botController.unTrackUserLink(1L, new Link("https://example.com"))).thenReturn(false);
+        Mockito.when(botService.unTrackUserLink(1L, new Link("https://example.com"))).thenReturn(false);
         UpdateWrapper update = createMockUpdateWrapper("/untrack https://example.com", 1L);
         SendMessageWrapper sendMessage = untrackCommand.handle(update);
         assertEquals("The link: https://example.com is not tracked", sendMessage.getParameters().get("text"));

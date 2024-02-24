@@ -2,7 +2,7 @@ package edu.java.bot.model;
 
 import java.util.Collection;
 
-public interface BotController {
+public interface BotService {
     boolean isUserRegistered(Long id);
 
     void registerUser(Long id);

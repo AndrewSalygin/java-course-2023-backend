@@ -2,21 +2,21 @@ package edu.java.bot.util;
 
 import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EnglishTextHandler implements TextHandler {
-    private final MessageSource messageSource;
+    private final ResourceBundleMessageSource resourceBundleMessageSource;
 
     @Autowired
-    public EnglishTextHandler(MessageSource messageSource) {
-        this.messageSource = messageSource;
+    public EnglishTextHandler(ResourceBundleMessageSource resourceBundleMessageSource) {
+        this.resourceBundleMessageSource = resourceBundleMessageSource;
     }
 
     @Override
     public String handle(String option) {
-        return messageSource.getMessage(option, null, Locale.of("eng"));
+        return resourceBundleMessageSource.getMessage(option, null, Locale.of("eng"));
     }
 
 }

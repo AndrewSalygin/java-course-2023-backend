@@ -1,6 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotController;
+import edu.java.bot.model.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.SendMessageWrapper;
 import edu.java.bot.wrapper.UpdateWrapper;
@@ -14,15 +14,15 @@ public class HelpCommandTest {
 
     static HelpCommand helpCommand;
 
-    static BotController botController;
+    static BotService botService;
 
     static TextHandler textHandler;
 
     @BeforeEach
     public void setUp() {
         textHandler = Mockito.mock(TextHandler.class);
-        botController = Mockito.mock(BotController.class);
-        helpCommand = new HelpCommand(textHandler, botController);
+        botService = Mockito.mock(BotService.class);
+        helpCommand = new HelpCommand(textHandler, botService);
     }
 
     @Test

@@ -1,6 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotController;
+import edu.java.bot.model.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.SendMessageWrapper;
 import edu.java.bot.wrapper.UpdateWrapper;
@@ -14,15 +14,15 @@ public class StartCommandTest {
 
     static StartCommand startCommand;
 
-    static BotController botController;
+    static BotService botService;
 
     static TextHandler textHandler;
 
     @BeforeEach
     public void setUp() {
         textHandler = Mockito.mock(TextHandler.class);
-        botController = Mockito.mock(BotController.class);
-        startCommand = new StartCommand(textHandler, botController);
+        botService = Mockito.mock(BotService.class);
+        startCommand = new StartCommand(textHandler, botService);
     }
 
     @Test
@@ -31,7 +31,7 @@ public class StartCommandTest {
 
         UpdateWrapper update = createMockUpdateWrapper("/start", 1L);
         SendMessageWrapper sendMessage = startCommand.handle(update);
-        Mockito.verify(botController, Mockito.times(1)).registerUser(1L);
+        Mockito.verify(botService, Mockito.times(1)).registerUser(1L);
         assertEquals("Hello", sendMessage.getParameters().get("text"));
     }
 }

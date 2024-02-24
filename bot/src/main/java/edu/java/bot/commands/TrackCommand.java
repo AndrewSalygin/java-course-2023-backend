@@ -1,6 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotController;
+import edu.java.bot.model.BotService;
 import edu.java.bot.model.Link;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.util.URLChecker;
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 public class TrackCommand extends AbstractCommand {
 
     @Autowired
-    public TrackCommand(TextHandler handler, BotController botController) {
-        super(handler, botController);
+    public TrackCommand(TextHandler handler, BotService botService) {
+        super(handler, botService);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class TrackCommand extends AbstractCommand {
     @Override
     public SendMessageWrapper handle(UpdateWrapper update) {
         Long chatId = update.message().chat().id();
-        botController.registerUser(chatId);
+        botService.registerUser(chatId);
         String[] elements = update.message().text().split(" ");
 
         if (isEmptyArgument(elements)) {
@@ -58,7 +58,7 @@ public class TrackCommand extends AbstractCommand {
             if (!link.url().isEmpty()) {
                 return String.format(handler.handle("message.invalid_argument"), link.url());
             }
-        } else if (botController.trackUserLink(chatId, link)) {
+        } else if (botService.trackUserLink(chatId, link)) {
             return String.format(handler.handle("command.track.successful_track"), link.url());
         }
         return String.format(handler.handle("command.track.already_tracked"), link.url());

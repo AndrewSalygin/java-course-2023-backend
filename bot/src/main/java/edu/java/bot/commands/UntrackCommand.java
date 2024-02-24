@@ -1,6 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotController;
+import edu.java.bot.model.BotService;
 import edu.java.bot.model.Link;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.util.URLChecker;
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 public class UntrackCommand extends AbstractCommand {
 
     @Autowired
-    public UntrackCommand(TextHandler handler, BotController botController) {
-        super(handler, botController);
+    public UntrackCommand(TextHandler handler, BotService botService) {
+        super(handler, botService);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class UntrackCommand extends AbstractCommand {
     @Override
     public SendMessageWrapper handle(UpdateWrapper update) {
         Long chatId = update.message().chat().id();
-        botController.registerUser(chatId);
+        botService.registerUser(chatId);
         String[] elements = update.message().text().split(" ");
 
         if (isEmptyArgument(elements)) {
@@ -58,7 +58,7 @@ public class UntrackCommand extends AbstractCommand {
             if (!link.url().isEmpty()) {
                 return String.format(handler.handle("message.invalid_argument"), link.url());
             }
-        } else if (botController.unTrackUserLink(chatId, link)) {
+        } else if (botService.unTrackUserLink(chatId, link)) {
             return String.format(handler.handle("command.untrack.successful_untrack"), link.url());
         }
         return String.format(handler.handle("command.untrack.not_tracked"), link.url());

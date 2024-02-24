@@ -6,11 +6,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MemoryBotController implements BotController {
+public class MemoryBotService implements BotService {
 
     private final ConcurrentHashMap<Long, HashSet<Link>> usersLinks;
 
-    public MemoryBotController() {
+    public MemoryBotService() {
         usersLinks = new ConcurrentHashMap<>();
     }
 

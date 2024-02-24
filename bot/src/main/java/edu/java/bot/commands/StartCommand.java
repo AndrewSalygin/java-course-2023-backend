@@ -1,6 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotController;
+import edu.java.bot.model.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.SendMessageWrapper;
 import edu.java.bot.wrapper.UpdateWrapper;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class StartCommand extends AbstractCommand {
 
     @Autowired
-    public StartCommand(TextHandler handler, BotController botController) {
+    public StartCommand(TextHandler handler, BotService botController) {
         super(handler, botController);
     }
 
@@ -29,8 +29,8 @@ public class StartCommand extends AbstractCommand {
     public SendMessageWrapper handle(UpdateWrapper update) {
         Long chatId = update.message().chat().id();
 
-        if (!botController.isUserRegistered(chatId)) {
-            botController.registerUser(chatId);
+        if (!botService.isUserRegistered(chatId)) {
+            botService.registerUser(chatId);
             return new SendMessageWrapper(chatId, handler.handle("command.start.first_hello_message"));
         } else {
             return new SendMessageWrapper(chatId, handler.handle("command.start.hello_message"));

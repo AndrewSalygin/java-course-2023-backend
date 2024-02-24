@@ -1,16 +1,16 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotController;
+import edu.java.bot.model.BotService;
 import edu.java.bot.util.TextHandler;
 
 public abstract class AbstractCommand implements Command {
     protected TextHandler handler;
 
-    protected BotController botController;
+    protected BotService botService;
 
-    public AbstractCommand(TextHandler handler, BotController botController) {
+    public AbstractCommand(TextHandler handler, BotService botService) {
         this.handler = handler;
-        this.botController = botController;
+        this.botService = botService;
     }
 
     boolean isEmptyArgument(String[] elements) {
