@@ -7,6 +7,9 @@ import edu.java.bot.wrapper.ChatWrapper;
 import edu.java.bot.wrapper.MessageWrapper;
 import edu.java.bot.wrapper.UpdateWrapper;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.core.io.ClassPathResource;
 
 public class Utils {
 
@@ -37,5 +40,13 @@ public class Utils {
         Mockito.when(message.chat().id()).thenReturn(chatId);
         Mockito.when(update.message()).thenReturn(message);
         return update;
+    }
+
+    public static ResourceBundleMessageSource messageSource() {
+        ResourceBundleMessageSource messageSourceResourceBundle = new ResourceBundleMessageSource();
+        YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
+        yamlPropertiesFactoryBean.setResources(new ClassPathResource("messagesTest.yml"));
+        messageSourceResourceBundle.setCommonMessages(yamlPropertiesFactoryBean.getObject());
+        return messageSourceResourceBundle;
     }
 }

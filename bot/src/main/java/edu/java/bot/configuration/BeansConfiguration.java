@@ -15,11 +15,11 @@ public class BeansConfiguration {
     }
 
     @Bean
-    public ResourceBundleMessageSource resourceBundleMessageSource() {
-        ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
+    public ResourceBundleMessageSource messageSourceResourceBundle() {
+        ResourceBundleMessageSource messageSourceResourceBundle = new ResourceBundleMessageSource();
         YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
         yamlPropertiesFactoryBean.setResources(new ClassPathResource("messages.yml"));
-        resourceBundleMessageSource.setCommonMessages(yamlPropertiesFactoryBean.getObject());
-        return resourceBundleMessageSource;
+        messageSourceResourceBundle.setCommonMessages(yamlPropertiesFactoryBean.getObject());
+        return messageSourceResourceBundle;
     }
 }

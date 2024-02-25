@@ -7,24 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
+import static edu.java.bot.Utils.messageSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EnglishTextHandlerTest {
 
     private static TextHandler textHandler;
 
-    @BeforeEach
-    public void setUp() {
-        ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
-        YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
-        yamlPropertiesFactoryBean.setResources(new ClassPathResource("messagesTest.yml"));
-        resourceBundleMessageSource.setCommonMessages(yamlPropertiesFactoryBean.getObject());
-        textHandler = new EnglishTextHandler(resourceBundleMessageSource);
-    }
-
     @DisplayName("Getting message from messages file")
     @Test
     void getMessageFromFileTest() {
+        textHandler = new EnglishTextHandler(messageSource());
         String message = textHandler.handle("message.common");
         assertEquals("Common message", message);
     }
