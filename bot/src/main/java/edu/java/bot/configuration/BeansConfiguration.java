@@ -1,6 +1,6 @@
 package edu.java.bot.configuration;
 
-import edu.java.bot.wrapper.TelegramBotWrapper;
+import com.pengrad.telegrambot.TelegramBot;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +10,8 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 public class BeansConfiguration {
     @Bean
-    public TelegramBotWrapper telegramBot(ApplicationConfig config) {
-        return new TelegramBotWrapper(config.telegramToken());
+    public TelegramBot telegramBot(ApplicationConfig config) {
+        return new TelegramBot(config.telegramToken());
     }
 
     @Bean

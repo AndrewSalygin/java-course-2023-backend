@@ -2,12 +2,11 @@ package edu.java.bot.commands;
 
 import edu.java.bot.model.BotService;
 import edu.java.bot.util.TextHandler;
-import edu.java.bot.wrapper.SendMessageWrapper;
-import edu.java.bot.wrapper.UpdateWrapper;
+import edu.java.bot.wrapper.Message;
+import edu.java.bot.wrapper.MessageResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import static edu.java.bot.Utils.createMockUpdateWrapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HelpCommandTest {
@@ -28,9 +27,8 @@ public class HelpCommandTest {
     @Test
     public void handleReturnHelpMessageTest() {
         Mockito.when(textHandler.handle("command.help.list_of_commands")).thenReturn("Help");
-
-        UpdateWrapper update = createMockUpdateWrapper("/help", 1L);
-        SendMessageWrapper sendMessage = helpCommand.handle(update);
-        assertEquals("Help", sendMessage.getParameters().get("text"));
+        Message message = new Message(1L, "/help");
+        MessageResponse sendMessage = helpCommand.handle(message);
+        assertEquals("Help", sendMessage.text());
     }
 }

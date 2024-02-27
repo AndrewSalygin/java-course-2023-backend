@@ -1,12 +1,12 @@
 package edu.java.bot.processors;
 
 import edu.java.bot.commands.Command;
-import edu.java.bot.wrapper.SendMessageWrapper;
-import edu.java.bot.wrapper.UpdateWrapper;
+import edu.java.bot.wrapper.Message;
+import edu.java.bot.wrapper.MessageResponse;
 import java.util.List;
 
 public interface UserMessageProcessor {
     List<? extends Command> commands();
 
-    SendMessageWrapper process(UpdateWrapper update);
+    MessageResponse process(Message message);
 }

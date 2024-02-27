@@ -2,12 +2,11 @@ package edu.java.bot.commands;
 
 import edu.java.bot.model.BotService;
 import edu.java.bot.util.TextHandler;
-import edu.java.bot.wrapper.SendMessageWrapper;
-import edu.java.bot.wrapper.UpdateWrapper;
+import edu.java.bot.wrapper.Message;
+import edu.java.bot.wrapper.MessageResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import static edu.java.bot.Utils.createMockUpdateWrapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StartCommandTest {
@@ -28,10 +27,9 @@ public class StartCommandTest {
     @Test
     public void handleRegisterUserTest() {
         Mockito.when(textHandler.handle("command.start.first_hello_message")).thenReturn("Hello");
-
-        UpdateWrapper update = createMockUpdateWrapper("/start", 1L);
-        SendMessageWrapper sendMessage = startCommand.handle(update);
+        Message message = new Message(1L, "/list");
+        MessageResponse sendMessage = startCommand.handle(message);
         Mockito.verify(botService, Mockito.times(1)).registerUser(1L);
-        assertEquals("Hello", sendMessage.getParameters().get("text"));
+        assertEquals("Hello", sendMessage.text());
     }
 }

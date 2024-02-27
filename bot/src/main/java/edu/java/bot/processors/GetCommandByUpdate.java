@@ -3,7 +3,7 @@ package edu.java.bot.processors;
 import edu.java.bot.commands.Command;
 import java.util.List;
 
-public class GetCommandByUpdate {
+public final class GetCommandByUpdate {
 
     private GetCommandByUpdate() {}
 

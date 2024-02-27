@@ -3,7 +3,7 @@ package edu.java.bot.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class URLChecker {
+public final class URLChecker {
 
     private URLChecker() {
     }
