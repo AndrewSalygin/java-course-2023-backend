@@ -20,7 +20,7 @@ public class MemoryBotService implements BotService {
     }
 
     @Override
-    public void registerUser(Long id) {
+    public void registerUserIfNew(Long id) {
         if (!isUserRegistered(id)) {
             usersLinks.put(id, new HashSet<>());
         }

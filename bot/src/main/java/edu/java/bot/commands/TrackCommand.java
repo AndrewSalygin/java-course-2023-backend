@@ -30,7 +30,7 @@ public class TrackCommand extends AbstractCommand {
     @Override
     public MessageResponse handle(Message message) {
         Long chatId = message.chatId();
-        botService.registerUser(chatId);
+        botService.registerUserIfNew(chatId);
         String[] elements = message.text().split(" ");
 
         if (isEmptyArgument(elements)) {

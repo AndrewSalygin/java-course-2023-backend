@@ -29,7 +29,7 @@ public class StartCommandTest {
         Mockito.when(textHandler.handle("command.start.first_hello_message")).thenReturn("Hello");
         Message message = new Message(1L, "/list");
         MessageResponse sendMessage = startCommand.handle(message);
-        Mockito.verify(botService, Mockito.times(1)).registerUser(1L);
+        Mockito.verify(botService, Mockito.times(1)).registerUserIfNew(1L);
         assertEquals("Hello", sendMessage.text());
     }
 }

@@ -29,7 +29,7 @@ public class StartCommand extends AbstractCommand {
     public MessageResponse handle(Message message) {
         Long chatId = message.chatId();
         if (!botService.isUserRegistered(chatId)) {
-            botService.registerUser(chatId);
+            botService.registerUserIfNew(chatId);
             return new MessageResponse(chatId, handler.handle("command.start.first_hello_message"));
         } else {
             return new MessageResponse(chatId, handler.handle("command.start.hello_message"));

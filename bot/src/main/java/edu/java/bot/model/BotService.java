@@ -5,7 +5,7 @@ import java.util.Collection;
 public interface BotService {
     boolean isUserRegistered(Long id);
 
-    void registerUser(Long id);
+    void registerUserIfNew(Long id);
 
     boolean isUserLinkTracked(Long id, Link link);
 

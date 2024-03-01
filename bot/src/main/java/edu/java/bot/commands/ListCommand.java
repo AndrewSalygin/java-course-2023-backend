@@ -29,7 +29,7 @@ public class ListCommand extends AbstractCommand {
     @Override
     public MessageResponse handle(Message message) {
         Long chatId = message.chatId();
-        botService.registerUser(chatId);
+        botService.registerUserIfNew(chatId);
         if (botService.userLinks(chatId).isEmpty()) {
             return new MessageResponse(chatId, handler.handle("command.list.empty"));
         }
