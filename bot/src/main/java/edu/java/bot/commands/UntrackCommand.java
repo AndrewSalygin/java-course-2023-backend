@@ -1,7 +1,7 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotService;
-import edu.java.bot.model.Link;
+import edu.java.bot.client.scrapper.dto.response.LinkResponse;
+import edu.java.bot.service.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.util.URLChecker;
 import edu.java.bot.wrapper.Message;
@@ -40,12 +40,11 @@ public class UntrackCommand extends AbstractCommand {
             );
         }
 
-        Link link;
+        LinkResponse link;
         StringBuilder answerString = new StringBuilder();
         for (int i = 1; i < elements.length; i++) {
             if (!elements[i].isEmpty()) {
-                link = new Link(elements[i]);
-                answerString.append(getAnswerForLink(link, chatId)).append('\n');
+                answerString.append(getAnswerForLink(elements[i], chatId)).append('\n');
             }
         }
         answerString.deleteCharAt(answerString.length() - 1);
@@ -53,14 +52,15 @@ public class UntrackCommand extends AbstractCommand {
         return new MessageResponse(chatId, answerString.toString());
     }
 
-    private String getAnswerForLink(Link link, Long chatId) {
-        if (!URLChecker.isURL(link.url())) {
-            if (!link.url().isEmpty()) {
-                return String.format(handler.handle("message.invalid_argument"), link.url());
+    private String getAnswerForLink(String link, Long chatId) {
+        if (!URLChecker.isURL(link)) {
+            if (!link.isEmpty()) {
+                return String.format(handler.handle("message.invalid_argument"), link);
             }
-        } else if (botService.unTrackUserLink(chatId, link)) {
-            return String.format(handler.handle("command.untrack.successful_untrack"), link.url());
+        } else if (botService.isUserLinkTracked(chatId, link)) {
+            botService.unTrackUserLink(chatId, link);
+            return String.format(handler.handle("command.untrack.successful_untrack"), link);
         }
-        return String.format(handler.handle("command.untrack.not_tracked"), link.url());
+        return String.format(handler.handle("command.untrack.not_tracked"), link);
     }
 }
