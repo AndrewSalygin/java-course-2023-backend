@@ -1,8 +1,7 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.wrapper.BotCommandWrapper;
-import edu.java.bot.wrapper.SendMessageWrapper;
-import edu.java.bot.wrapper.UpdateWrapper;
+import edu.java.bot.wrapper.Message;
+import edu.java.bot.wrapper.MessageResponse;
 
 public interface Command {
 
@@ -10,9 +9,5 @@ public interface Command {
 
     String description();
 
-    SendMessageWrapper handle(UpdateWrapper update);
-
-    default BotCommandWrapper toApiCommand() {
-        return new BotCommandWrapper(command(), description());
-    }
+    MessageResponse handle(Message update);
 }

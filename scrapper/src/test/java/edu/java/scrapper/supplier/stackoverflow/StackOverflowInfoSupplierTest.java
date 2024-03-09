@@ -1,0 +1,104 @@
+package edu.java.scrapper.supplier.stackoverflow;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
+import edu.java.configuration.supplier.GithubConfig;
+import edu.java.configuration.supplier.GithubPatternConfig;
+import edu.java.configuration.supplier.StackOverflowConfig;
+import edu.java.configuration.supplier.StackOverflowPatternConfig;
+import edu.java.supplier.api.LinkInfo;
+import edu.java.supplier.github.GithubInfoSupplier;
+import edu.java.supplier.stackoverflow.StackOverflowInfoSupplier;
+import lombok.SneakyThrows;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import java.net.URI;
+import java.time.OffsetDateTime;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+
+public class StackOverflowInfoSupplierTest {
+    private static WireMockServer server;
+
+    @BeforeAll
+    public static void setUp() {
+        server = new WireMockServer(wireMockConfig().dynamicPort());
+        server.stubFor(get(urlPathMatching("/questions/69228850.*"))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "application/json")
+                .withBody("""
+                    {
+                        "items": [
+                          {
+                            "title": "Spring Boot with postgres --&gt; HikariPool-1 - Exception during pool initialization",
+                            "last_activity_date": 1631909213
+                          }
+                        ]
+                    }
+                    """)));
+        server.stubFor(get(urlPathMatching("/questions/692288500000.*"))
+            .willReturn(aResponse()
+                .withStatus(404)));
+        server.start();
+    }
+
+    @SneakyThrows
+    @Test
+    public void returnRightInformationTest() {
+        StackOverflowPatternConfig stackOverflowPatternConfig = Mockito.mock(StackOverflowPatternConfig.class);
+        Mockito.when(stackOverflowPatternConfig.questions()).thenReturn("https://stackoverflow.com/questions/(\\d+).*");
+        StackOverflowConfig config = new StackOverflowConfig(server.baseUrl(), stackOverflowPatternConfig);
+
+        StackOverflowInfoSupplier supplier = new StackOverflowInfoSupplier(config);
+        LinkInfo info = supplier.fetchInfo(
+            new URI(
+                "https://stackoverflow.com/questions/69228850/spring-boot-with-postgres-hikaripool-1-exception-during-pool-initializatio").toURL()
+        );
+        Assertions.assertThat(info)
+            .extracting(LinkInfo::url, LinkInfo::title, LinkInfo::lastUpdate)
+            .contains(
+                new URI(
+                    "https://stackoverflow.com/questions/69228850/spring-boot-with-postgres-hikaripool-1-exception-during-pool-initializatio").toURL(),
+                "Spring Boot with postgres --&gt; HikariPool-1 - Exception during pool initialization",
+                OffsetDateTime.parse("2021-09-17T20:06:53Z")
+            );
+    }
+
+    @SneakyThrows
+    @Test
+    public void returnNullInformationWhenRepositoryWrongTest() {
+        StackOverflowPatternConfig stackOverflowPatternConfig = Mockito.mock(StackOverflowPatternConfig.class);
+        Mockito.when(stackOverflowPatternConfig.questions()).thenReturn("https://stackoverflow.com/wrongUrl/(\\d+).*");
+        StackOverflowConfig config = new StackOverflowConfig(server.baseUrl(), stackOverflowPatternConfig);
+
+        StackOverflowInfoSupplier supplier = new StackOverflowInfoSupplier(config);
+        LinkInfo info = supplier.fetchInfo(
+            new URI("https://stackoverflow.com/questions/69228850/spring-boot-with-postgres-hikaripool-1-exception-during-pool-initializatio").toURL()
+        );
+        Assertions.assertThat(info).isNull();
+    }
+
+    @SneakyThrows
+    @Test
+    public void returnNullInformationWithWrongUrlTest() {
+        GithubPatternConfig githubPatternConfig = Mockito.mock(GithubPatternConfig.class);
+        Mockito.when(githubPatternConfig.repository()).thenReturn("https://github.com/(.+)/(.+)");
+        GithubConfig config = new GithubConfig(server.baseUrl(), githubPatternConfig);
+
+        GithubInfoSupplier supplier = new GithubInfoSupplier(config);
+        LinkInfo info = supplier.fetchInfo(
+            new URI("https://github.com/AndrewSalygin/test").toURL()
+        );
+        Assertions.assertThat(info)
+            .extracting(LinkInfo::url, LinkInfo::title, LinkInfo::lastUpdate)
+            .contains(
+                new URI("https://github.com/AndrewSalygin/test").toURL(),
+                null,
+                null
+            );
+    }
+}

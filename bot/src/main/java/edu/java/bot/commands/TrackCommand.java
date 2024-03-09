@@ -4,8 +4,8 @@ import edu.java.bot.model.BotService;
 import edu.java.bot.model.Link;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.util.URLChecker;
-import edu.java.bot.wrapper.SendMessageWrapper;
-import edu.java.bot.wrapper.UpdateWrapper;
+import edu.java.bot.wrapper.Message;
+import edu.java.bot.wrapper.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,13 +28,13 @@ public class TrackCommand extends AbstractCommand {
     }
 
     @Override
-    public SendMessageWrapper handle(UpdateWrapper update) {
-        Long chatId = update.message().chat().id();
-        botService.registerUser(chatId);
-        String[] elements = update.message().text().split(" ");
+    public MessageResponse handle(Message message) {
+        Long chatId = message.chatId();
+        botService.registerUserIfNew(chatId);
+        String[] elements = message.text().split(" ");
 
         if (isEmptyArgument(elements)) {
-            return new SendMessageWrapper(
+            return new MessageResponse(
                 chatId,
                 handler.handle("message.empty_argument")
             );
@@ -50,7 +50,7 @@ public class TrackCommand extends AbstractCommand {
         }
         answerString.deleteCharAt(answerString.length() - 1);
 
-        return new SendMessageWrapper(chatId, answerString.toString());
+        return new MessageResponse(chatId, answerString.toString());
     }
 
     private String getAnswerForLink(Link link, Long chatId) {

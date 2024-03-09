@@ -1,6 +1,6 @@
 package edu.java.bot.configuration;
 
-import edu.java.bot.wrapper.TelegramBotWrapper;
+import com.pengrad.telegrambot.TelegramBot;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,16 +10,16 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 public class BeansConfiguration {
     @Bean
-    public TelegramBotWrapper telegramBot(ApplicationConfig config) {
-        return new TelegramBotWrapper(config.telegramToken());
+    public TelegramBot telegramBot(ApplicationConfig config) {
+        return new TelegramBot(config.telegramToken());
     }
 
     @Bean
-    public ResourceBundleMessageSource resourceBundleMessageSource() {
-        ResourceBundleMessageSource resourceBundleMessageSource = new ResourceBundleMessageSource();
+    public ResourceBundleMessageSource messageSourceResourceBundle() {
+        ResourceBundleMessageSource messageSourceResourceBundle = new ResourceBundleMessageSource();
         YamlPropertiesFactoryBean yamlPropertiesFactoryBean = new YamlPropertiesFactoryBean();
         yamlPropertiesFactoryBean.setResources(new ClassPathResource("messages.yml"));
-        resourceBundleMessageSource.setCommonMessages(yamlPropertiesFactoryBean.getObject());
-        return resourceBundleMessageSource;
+        messageSourceResourceBundle.setCommonMessages(yamlPropertiesFactoryBean.getObject());
+        return messageSourceResourceBundle;
     }
 }

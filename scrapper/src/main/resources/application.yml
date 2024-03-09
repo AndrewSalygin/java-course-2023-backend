@@ -4,6 +4,16 @@ app:
     interval: 10s
     force-check-delay: 10s
 
+supplier:
+  github:
+    url: "https://api.github.com/"
+    patterns:
+      repository: "https://github.com/(.+)/(.+)"
+  stackoverflow:
+    url: "https://api.stackexchange.com/2.3"
+    patterns:
+      questions: "https://stackoverflow.com/questions/(\\d+).*"
+
 spring:
   application:
     name: scrapper
@@ -13,3 +23,4 @@ server:
 
 logging:
   config: classpath:log4j2-plain.xml
+

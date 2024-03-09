@@ -19,7 +19,7 @@ public class MemoryBotControllerTest {
     @Test
     @DisplayName("User registered")
     public void isUserRegisteredTrueTest() {
-        service.registerUser(12L);
+        service.registerUserIfNew(12L);
         assertTrue(service.isUserRegistered(12L));
     }
 
@@ -32,7 +32,7 @@ public class MemoryBotControllerTest {
     @Test
     @DisplayName("User has link isTrack()")
     public void isTrackUserLinkTrueTest() {
-        service.registerUser(1L);
+        service.registerUserIfNew(1L);
         service.trackUserLink(1L, new Link("google.com"));
         assertTrue(service.isUserLinkTracked(1L, new Link("google.com")));
     }
@@ -40,21 +40,21 @@ public class MemoryBotControllerTest {
     @Test
     @DisplayName("User hasn't link isTrack()")
     public void isTrackUserLinkFalseTest() {
-        service.registerUser(1L);
+        service.registerUserIfNew(1L);
         assertFalse(service.isUserLinkTracked(1L, new Link("google.com")));
     }
 
     @Test
     @DisplayName("ПUser hasn't link unTrack()")
     public void unTrackUserLinkTrueTest() {
-        service.registerUser(1L);
+        service.registerUserIfNew(1L);
         assertFalse(service.unTrackUserLink(1L, new Link("google.com")));
     }
 
     @Test
     @DisplayName("User has link unTrack()")
     public void unTrackUserLinkFalseTest() {
-        service.registerUser(1L);
+        service.registerUserIfNew(1L);
         service.trackUserLink(1L, new Link("google.com"));
         assertTrue(service.unTrackUserLink(1L, new Link("google.com")));
     }
@@ -62,7 +62,7 @@ public class MemoryBotControllerTest {
     @Test
     @DisplayName("List of links")
     public void userLinksTest() {
-        service.registerUser(1L);
+        service.registerUserIfNew(1L);
         service.trackUserLink(1L, new Link("google.com"));
         assertThat(service.userLinks(1L)).hasSize(1).element(0)
             .isEqualTo(new Link("google.com"));

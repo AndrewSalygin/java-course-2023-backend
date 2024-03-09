@@ -1,17 +1,15 @@
 package edu.java.bot.util;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class URLChecker {
+public final class URLChecker {
+
+    private static Pattern pattern = Pattern.compile("^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]");
 
     private URLChecker() {
     }
 
     public static boolean isURL(String text) {
-        String regex = "^(https?)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(text);
-        return matcher.matches();
+        return pattern.matcher(text).matches();
     }
 }
