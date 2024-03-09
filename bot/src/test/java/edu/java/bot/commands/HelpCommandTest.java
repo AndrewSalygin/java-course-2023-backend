@@ -1,0 +1,36 @@
+package edu.java.bot.commands;
+
+import edu.java.bot.model.BotService;
+import edu.java.bot.util.TextHandler;
+import edu.java.bot.wrapper.SendMessageWrapper;
+import edu.java.bot.wrapper.UpdateWrapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import static edu.java.bot.Utils.createMockUpdateWrapper;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class HelpCommandTest {
+
+    static HelpCommand helpCommand;
+
+    static BotService botService;
+
+    static TextHandler textHandler;
+
+    @BeforeEach
+    public void setUp() {
+        textHandler = Mockito.mock(TextHandler.class);
+        botService = Mockito.mock(BotService.class);
+        helpCommand = new HelpCommand(textHandler, botService);
+    }
+
+    @Test
+    public void handleReturnHelpMessageTest() {
+        Mockito.when(textHandler.handle("command.help.list_of_commands")).thenReturn("Help");
+
+        UpdateWrapper update = createMockUpdateWrapper("/help", 1L);
+        SendMessageWrapper sendMessage = helpCommand.handle(update);
+        assertEquals("Help", sendMessage.getParameters().get("text"));
+    }
+}
