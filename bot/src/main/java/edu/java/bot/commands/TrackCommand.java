@@ -1,6 +1,5 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.client.scrapper.dto.response.LinkResponse;
 import edu.java.bot.service.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.util.URLChecker;
@@ -40,7 +39,6 @@ public class TrackCommand extends AbstractCommand {
             );
         }
 
-        LinkResponse link;
         StringBuilder answerString = new StringBuilder();
         for (int i = 1; i < elements.length; i++) {
             if (!elements[i].isEmpty()) {
