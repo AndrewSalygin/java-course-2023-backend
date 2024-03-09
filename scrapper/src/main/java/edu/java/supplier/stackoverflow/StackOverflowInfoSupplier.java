@@ -7,8 +7,10 @@ import java.net.URL;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.Getter;
+import org.springframework.stereotype.Component;
 
 @Getter
+@Component
 public class StackOverflowInfoSupplier extends WebClientInfoSupplier {
 
     private static final String TYPE_SUPPLIER = "stackoverflow";

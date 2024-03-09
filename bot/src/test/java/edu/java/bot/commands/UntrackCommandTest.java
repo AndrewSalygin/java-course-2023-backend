@@ -1,7 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotService;
-import edu.java.bot.model.Link;
+import edu.java.bot.service.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.Message;
 import edu.java.bot.wrapper.MessageResponse;
@@ -32,7 +31,7 @@ public class UntrackCommandTest {
         Mockito.when(textHandler.handle("command.untrack.successful_untrack"))
             .thenReturn("The link: %s is now untraceable");
 
-        Mockito.when(botService.unTrackUserLink(1L, new Link("https://example.com"))).thenReturn(true);
+        Mockito.when(botService.isUserLinkTracked(1L, "https://example.com")).thenReturn(true);
         Message message = new Message(1L, "/untrack https://example.com");
         MessageResponse sendMessage = untrackCommand.handle(message);
         assertEquals("The link: https://example.com is now untraceable", sendMessage.text());
@@ -44,7 +43,7 @@ public class UntrackCommandTest {
         Mockito.when(textHandler.handle("command.untrack.not_tracked"))
             .thenReturn("The link: %s is not tracked");
 
-        Mockito.when(botService.unTrackUserLink(1L, new Link("https://example.com"))).thenReturn(false);
+        Mockito.when(botService.isUserLinkTracked(1L, "https://example.com")).thenReturn(false);
         Message message = new Message(1L, "/untrack https://example.com");
         MessageResponse sendMessage = untrackCommand.handle(message);
         assertEquals("The link: https://example.com is not tracked", sendMessage.text());

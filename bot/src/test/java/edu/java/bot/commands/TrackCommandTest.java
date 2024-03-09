@@ -1,7 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotService;
-import edu.java.bot.model.Link;
+import edu.java.bot.service.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.Message;
 import edu.java.bot.wrapper.MessageResponse;
@@ -32,7 +31,7 @@ public class TrackCommandTest {
         Mockito.when(textHandler.handle("command.track.successful_track"))
             .thenReturn("The link: %s is now being tracked");
 
-        Mockito.when(botService.trackUserLink(1L, new Link("https://example.com"))).thenReturn(true);
+        Mockito.when(botService.isUserLinkTracked(1L, "https://example.com")).thenReturn(false);
         Message message = new Message(1L, "/track https://example.com");
         MessageResponse sendMessage = trackCommand.handle(message);
         assertEquals("The link: https://example.com is now being tracked", sendMessage.text());
@@ -44,7 +43,7 @@ public class TrackCommandTest {
         Mockito.when(textHandler.handle("command.track.already_tracked"))
             .thenReturn("The link: %s is already being tracked");
 
-        Mockito.when(botService.trackUserLink(1L, new Link("https://example.com"))).thenReturn(false);
+        Mockito.when(botService.isUserLinkTracked(1L, "https://example.com")).thenReturn(true);
         Message message = new Message(1L, "/track https://example.com");
         MessageResponse sendMessage = trackCommand.handle(message);
         assertEquals("The link: https://example.com is already being tracked", sendMessage.text());

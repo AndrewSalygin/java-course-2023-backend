@@ -1,6 +1,6 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotService;
+import edu.java.bot.service.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.Message;
 import edu.java.bot.wrapper.MessageResponse;

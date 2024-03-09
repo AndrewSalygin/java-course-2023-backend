@@ -2,16 +2,15 @@ package edu.java.bot.processors;
 
 import edu.java.bot.commands.Command;
 import edu.java.bot.util.TextHandler;
-import java.util.List;
 import edu.java.bot.wrapper.Message;
 import edu.java.bot.wrapper.MessageResponse;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NotifyBotUserMessageProcessorTest {

@@ -1,7 +1,7 @@
 package edu.java.bot.commands;
 
-import edu.java.bot.model.BotService;
-import edu.java.bot.model.Link;
+import edu.java.bot.client.scrapper.dto.response.LinkResponse;
+import edu.java.bot.service.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.Message;
 import edu.java.bot.wrapper.MessageResponse;
@@ -30,11 +30,11 @@ public class ListCommand extends AbstractCommand {
     public MessageResponse handle(Message message) {
         Long chatId = message.chatId();
         botService.registerUserIfNew(chatId);
-        if (botService.userLinks(chatId).isEmpty()) {
+        if (botService.userLinks(chatId).links().isEmpty()) {
             return new MessageResponse(chatId, handler.handle("command.list.empty"));
         }
         StringBuilder linksString = new StringBuilder();
-        for (Link link : botService.userLinks(chatId)) {
+        for (LinkResponse link : botService.userLinks(chatId).links()) {
             linksString.append(link.url()).append("\n");
         }
         return new MessageResponse(chatId, String.format(handler.handle("command.list.show"), linksString));

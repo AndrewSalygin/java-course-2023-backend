@@ -1,21 +1,20 @@
 package edu.java.scrapper.supplier.github;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import edu.java.configuration.supplier.GithubConfig;
 import edu.java.configuration.supplier.GithubPatternConfig;
 import edu.java.supplier.api.LinkInfo;
 import edu.java.supplier.github.GithubInfoSupplier;
+import java.net.URI;
+import java.time.OffsetDateTime;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import java.net.URI;
-import java.time.OffsetDateTime;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 public class GithubInfoSupplierTest {
