@@ -14,8 +14,10 @@ import org.springframework.validation.annotation.Validated;
                                 description = "Scrapper API", version = "1.0.0"))
 @ConfigurationProperties(prefix = "app", ignoreUnknownFields = false)
 public record ApplicationConfig(
-    @NotNull Scheduler scheduler
+    @NotNull Scheduler scheduler,
+    String githubToken
 ) {
-    public record Scheduler(@NotNull boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay) {
+    public record Scheduler(@NotNull boolean enable, @NotNull Duration interval, @NotNull Duration forceCheckDelay,
+                            int maxLinksPerCheck) {
     }
 }

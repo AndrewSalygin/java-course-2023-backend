@@ -10,6 +10,10 @@ public abstract class WebClientInfoSupplier implements InfoSupplier {
         this.webClient = WebClient.create(baseUrl);
     }
 
+    public WebClientInfoSupplier(WebClient webClient) {
+        this.webClient = webClient;
+    }
+
     public <T> T executeRequestGet(String uri, Class<T> type, T defaultValue) {
         return webClient.get().uri(uri).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(type)
             .onErrorReturn(defaultValue).block();

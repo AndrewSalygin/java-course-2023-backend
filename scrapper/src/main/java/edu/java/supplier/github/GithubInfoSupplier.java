@@ -1,12 +1,15 @@
 package edu.java.supplier.github;
 
+import edu.java.configuration.ApplicationConfig;
 import edu.java.configuration.supplier.GithubConfig;
 import edu.java.supplier.api.LinkInfo;
 import edu.java.supplier.api.WebClientInfoSupplier;
 import java.net.URL;
 import java.util.regex.Pattern;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @Getter
 @Component
@@ -16,22 +19,35 @@ public class GithubInfoSupplier extends WebClientInfoSupplier {
 
     private final Pattern repositoryPattern;
 
+    @Autowired
+    public GithubInfoSupplier(GithubConfig githubConfig, ApplicationConfig applicationConfig) {
+        super(WebClient.builder()
+            .baseUrl(githubConfig.url())
+            .defaultHeaders(headers -> {
+                if (applicationConfig.githubToken() != null) {
+                    headers.set("Authorization", "Bearer " + applicationConfig.githubToken());
+                }
+            })
+            .build()
+        );
+        repositoryPattern = Pattern.compile(githubConfig.patterns().repository());
+    }
+
     public GithubInfoSupplier(
-        GithubConfig config
+        GithubConfig githubConfig
     ) {
-        super(config.url());
-        repositoryPattern = Pattern.compile(config.patterns().repository());
+        super(githubConfig.url());
+        repositoryPattern = Pattern.compile(githubConfig.patterns().repository());
+    }
+
+    public String getTypeSupplier() {
+        return TYPE_SUPPLIER;
     }
 
     @Override
     public LinkInfo fetchInfo(URL url) {
-        Pattern pattern = supportedPattern(url);
-        if (pattern == null) {
-            return null;
-        }
-
         GithubRepoInfo info = null;
-        if (pattern == repositoryPattern) {
+        if (isSupported(url)) {
             info = executeRequestGet("repos" + url.getPath(), GithubRepoInfo.class, GithubRepoInfo.EMPTY);
         }
         if (info == null) {
@@ -41,10 +57,16 @@ public class GithubInfoSupplier extends WebClientInfoSupplier {
     }
 
     @Override
-    public Pattern supportedPattern(URL url) {
+    public boolean isSupported(URL url) {
+        Pattern pattern = supportedPattern(url);
+        return pattern != null;
+    }
+
+    private Pattern supportedPattern(URL url) {
         if (repositoryPattern.matcher(url.toString()).matches()) {
             return repositoryPattern;
         }
         return null;
     }
+
 }

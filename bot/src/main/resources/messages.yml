@@ -23,3 +23,5 @@ message:
   unknown_command: "Unknown command: %s"
   invalid_argument: "Invalid argument: %s"
   empty_argument: "Empty argument"
+link:
+  update: "Updated link %s"
