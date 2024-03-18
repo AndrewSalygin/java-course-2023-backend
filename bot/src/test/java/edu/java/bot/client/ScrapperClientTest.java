@@ -50,7 +50,7 @@ public class ScrapperClientTest {
 
         ScrapperClient scrapperClient = scrapperClient("http://localhost:8081");
         LinkResponse response =
-            scrapperClient.addTrackingLink(42L, new AddLinkRequest(URI.create("https://google.com").toURL()));
+            scrapperClient.addTrackingLink(42L, new AddLinkRequest(URI.create("https://google.com").toURL())).answer();
         Assertions.assertThat(response)
             .extracting(LinkResponse::id, LinkResponse::url)
             .contains(42L, URI.create("https://google.com").toURL());
@@ -74,12 +74,11 @@ public class ScrapperClientTest {
 
         ScrapperClient scrapperClient = scrapperClient("http://localhost:8081");
         LinkResponse response =
-            scrapperClient.deleteTrackingLink(42L, new RemoveLinkRequest(URI.create("https://google.com").toURL()));
+            scrapperClient.deleteTrackingLink(42L, new RemoveLinkRequest(URI.create("https://google.com").toURL())).answer();
         Assertions.assertThat(response)
             .extracting(LinkResponse::id, LinkResponse::url)
             .contains(42L, URI.create("https://google.com").toURL());
     }
-
 
     private static ScrapperClient scrapperClient(String baseUrl) {
         WebClient webClient = WebClient.builder()

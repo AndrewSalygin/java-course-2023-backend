@@ -3,7 +3,7 @@ package edu.java.service;
 
 public interface TelegramChatService {
 
-    void registerChat(Long chatId);
+    void registerChat(Long tgChatId);
 
-    void deleteChat(Long chatId);
+    void deleteChat(Long tgChatId);
 }

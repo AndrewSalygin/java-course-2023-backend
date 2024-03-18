@@ -5,6 +5,7 @@ import edu.java.bot.dto.request.LinkUpdate;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.MessageResponse;
 import edu.java.bot.wrapper.TelegramService;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class DefaultLinkUpdatesSenderService implements LinkUpdatesSenderService
         linkUpdate.tgChatIds().forEach(chatId -> telegramService.sendMessage(
             new MessageResponse(
                 chatId,
-                String.format(handler.handle("link.update"), linkUpdate.url())
+                handler.handle("link.update", Map.of("link", String.valueOf(linkUpdate.url())))
             ), ParseMode.Markdown));
     }
 }

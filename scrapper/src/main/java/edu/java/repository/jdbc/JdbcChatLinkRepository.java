@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
+@SuppressWarnings("MultipleStringLiterals")
 public class JdbcChatLinkRepository implements ChatLinkRepository {
 
     private final JdbcClient client;
@@ -75,5 +76,20 @@ public class JdbcChatLinkRepository implements ChatLinkRepository {
             .query(Long.class)
             .optional()
             .isPresent();
+    }
+
+    @Override
+    public boolean isExists(Long chatId, URL url) {
+        Long linkId = client.sql("SELECT link_id FROM link WHERE url = ?")
+            .param(url)
+            .query(Long.class)
+            .optional()
+            .orElse(null);
+
+        if (linkId == null) {
+            return false;
+        }
+
+        return isExists(chatId, linkId);
     }
 }

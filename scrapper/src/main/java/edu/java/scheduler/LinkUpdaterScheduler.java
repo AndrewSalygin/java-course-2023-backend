@@ -41,7 +41,7 @@ public class LinkUpdaterScheduler {
                 LinkInfo linkInfo = supplier.fetchInfo(link.url());
 
                 if (linkInfo.lastUpdate().isAfter(link.lastUpdate())) {
-                    linkService.update(link.linkId(), link.lastUpdate());
+                    linkService.update(link.linkId(), linkInfo.lastUpdate());
                     botClient.handleUpdate(new LinkUpdate(
                         link.linkId(),
                         link.url(),

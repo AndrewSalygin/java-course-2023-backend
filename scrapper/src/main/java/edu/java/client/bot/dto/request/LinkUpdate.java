@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public record LinkUpdate(
     @NotNull Long id,
-    @NotNull URL link,
+    @NotNull URL url,
     @NotEmpty String description,
     @NotEmpty List<Long> tgChatIds
 ) {

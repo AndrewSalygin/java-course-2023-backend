@@ -2,19 +2,17 @@ package edu.java.bot.service;
 
 import edu.java.bot.client.scrapper.dto.response.LinkResponse;
 import edu.java.bot.client.scrapper.dto.response.ListLinksResponse;
+import edu.java.bot.dto.OptionalAnswer;
 
 public interface BotService {
-    boolean isUserRegistered(Long id);
 
-    void registerUserIfNew(Long id);
+    OptionalAnswer<Void> registerUserIfNew(Long id);
 
-    void deleteUser(Long id);
+    OptionalAnswer<Void> deleteUser(Long id);
 
-    boolean isUserLinkTracked(Long id, String url);
+    OptionalAnswer<LinkResponse> trackUserLink(Long id, String url);
 
-    LinkResponse trackUserLink(Long id, String url);
+    OptionalAnswer<LinkResponse> unTrackUserLink(Long id, String url);
 
-    LinkResponse unTrackUserLink(Long id, String url);
-
-    ListLinksResponse userLinks(Long id);
+    OptionalAnswer<ListLinksResponse> userLinks(Long id);
 }
