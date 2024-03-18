@@ -21,6 +21,10 @@ public class StackOverflowInfoSupplier extends WebClientInfoSupplier {
         questionsPattern = Pattern.compile(config.patterns().questions());
     }
 
+    public String getTypeSupplier() {
+        return TYPE_SUPPLIER;
+    }
+
     @Override
     public LinkInfo fetchInfo(URL url) {
         Pattern pattern = supportedPattern(url);
@@ -50,10 +54,17 @@ public class StackOverflowInfoSupplier extends WebClientInfoSupplier {
     }
 
     @Override
-    public Pattern supportedPattern(URL url) {
+    public boolean isSupported(URL url) {
+        Pattern pattern = supportedPattern(url);
+        return pattern != null;
+    }
+
+    private Pattern supportedPattern(URL url) {
         if (questionsPattern.matcher(url.toString()).matches()) {
             return questionsPattern;
         }
         return null;
     }
+
+
 }

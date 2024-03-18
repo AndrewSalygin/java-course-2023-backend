@@ -1,9 +1,14 @@
 package edu.java.bot.commands;
 
+import edu.java.bot.client.scrapper.dto.response.LinkResponse;
+import edu.java.bot.dto.OptionalAnswer;
+import edu.java.bot.dto.response.ApiErrorResponse;
 import edu.java.bot.service.BotService;
 import edu.java.bot.util.TextHandler;
+import edu.java.bot.util.URLCreator;
 import edu.java.bot.wrapper.Message;
 import edu.java.bot.wrapper.MessageResponse;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,10 +33,11 @@ public class TrackCommandTest {
     @Test
     @DisplayName("Successful tracking")
     public void handleSuccessfulTrackLinkTest() {
-        Mockito.when(textHandler.handle("command.track.successful_track"))
-            .thenReturn("The link: %s is now being tracked");
+        Mockito.when(textHandler.handle("command.track.messages.successful_track", Map.of("link", "https://example.com")))
+            .thenReturn("The link: https://example.com is now being tracked");
 
-        Mockito.when(botService.isUserLinkTracked(1L, "https://example.com")).thenReturn(false);
+        Mockito.when(botService.trackUserLink(1L, "https://example.com"))
+            .thenReturn(OptionalAnswer.of(new LinkResponse(1L, URLCreator.createURL("https://example.com"))));
         Message message = new Message(1L, "/track https://example.com");
         MessageResponse sendMessage = trackCommand.handle(message);
         assertEquals("The link: https://example.com is now being tracked", sendMessage.text());
@@ -40,13 +46,19 @@ public class TrackCommandTest {
     @Test
     @DisplayName("The link is already being tracked")
     public void handleAlreadyTrackLinkTest() {
-        Mockito.when(textHandler.handle("command.track.already_tracked"))
-            .thenReturn("The link: %s is already being tracked");
+        Mockito.when(textHandler.handle("command.track.messages.errors.already_tracked", Map.of("link", "https://example.com")))
+            .thenReturn("The link: https://example.com is already being tracked.");
 
-        Mockito.when(botService.isUserLinkTracked(1L, "https://example.com")).thenReturn(true);
+        Mockito.when(botService.trackUserLink(1L, "https://example.com"))
+            .thenReturn(OptionalAnswer.error(new ApiErrorResponse("The link: https://example.com is already being tracked.",
+                null,
+                null,
+                null,
+                null
+            )));
         Message message = new Message(1L, "/track https://example.com");
         MessageResponse sendMessage = trackCommand.handle(message);
-        assertEquals("The link: https://example.com is already being tracked", sendMessage.text());
+        assertEquals("The link: https://example.com is already being tracked.", sendMessage.text());
     }
 
     @Test

@@ -26,7 +26,7 @@ public class StartCommandTest {
 
     @Test
     public void handleRegisterUserTest() {
-        Mockito.when(textHandler.handle("command.start.first_hello_message")).thenReturn("Hello");
+        Mockito.when(textHandler.handle("command.start.messages.success.first_hello_message")).thenReturn("Hello");
         Message message = new Message(1L, "/list");
         MessageResponse sendMessage = startCommand.handle(message);
         Mockito.verify(botService, Mockito.times(1)).registerUserIfNew(1L);

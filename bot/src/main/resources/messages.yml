@@ -1,25 +1,40 @@
 command:
   start:
-    description: "Getting started with the bot"
-    first_hello_message: "Hello, I'm notify bot! Type `/help` to find out the commands"
-    hello_message: "Welcome back!"
+    description: "Getting started with the bot."
+    messages:
+      success:
+        first_hello_message: "Hello, I'm notify bot! Type `/help` to find out the commands."
+        hello_message: "Welcome back!"
   help:
-    description: "Show information about commands"
-    list_of_commands: "`/help` - Show information about commands\n`/track url(https://... or http://...)` - Start tracking link\n\
-    `/untrack url(https://... or http://...)` - Stop tracking link\n`/list` - Show a list of tracked links"
+    description: "Show information about commands."
+    util:
+      title: "List of available commands:\n"
+      help_command_format: "`%command%` - %description%\n"
   track:
-    description: "Start tracking links"
-    successful_track: "The link: %s is now being tracked"
-    already_tracked: "The link: %s is already being tracked"
+    description: "Start tracking link `/track url` (only https or http). Example: `/track https://google.com`."
+    messages:
+      successful_track: "The link: %link% is now being tracked! \nTo stop tracking, enter: `/untrack %link%`.
+      \nTo display a list of all tracked links, use: `/list`."
+      errors:
+        invalid_command_usage: "Incorrect use of the command, correct use: `/track url` (only https or http). Example: `/track https://google.com`."
+        invalid_argument: "Incorrectly specified link (only https or http). Example: `/track https://google.com`."
+        error_add: "Error adding a link %link%: %error_message%"
+        already_tracked: "The link: %link% is already being tracked."
   untrack:
-    description: "Stop tracking links"
-    successful_untrack: "The link: %s is now untraceable"
-    not_tracked: "The link: %s is not tracked"
+    description: "Stop tracking link."
+    messages:
+      successful_untrack: "The link: %link% is now untraceable!"
+      errors:
+        not_tracked: "The link: %link% is not tracked."
+        error_untrack: "Error stopping link tracking %link%: %error_message%"
   list:
-    description: "Show a list of tracked links"
-    show: "Your tracked links:\n %s"
-    empty: "You haven't any tracked links"
+    description: "Show a list of tracked links."
+    messages:
+      show_tracked_links: "Your tracked links:\n"
+      empty_list_of_links: "You haven't any tracked links."
 message:
-  unknown_command: "Unknown command: %s"
-  invalid_argument: "Invalid argument: %s"
-  empty_argument: "Empty argument"
+  unknown_command: "Unknown command."
+  invalid_argument: "Invalid argument: `%argument%`."
+  empty_argument: "Empty argument."
+link:
+  update: "Updated link %link%."

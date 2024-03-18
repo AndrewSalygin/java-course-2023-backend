@@ -1,5 +1,6 @@
 package edu.java.bot.commands;
 
+import edu.java.bot.dto.OptionalAnswer;
 import edu.java.bot.service.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.wrapper.Message;
@@ -28,11 +29,11 @@ public class StartCommand extends AbstractCommand {
     @Override
     public MessageResponse handle(Message message) {
         Long chatId = message.chatId();
-        if (!botService.isUserRegistered(chatId)) {
-            botService.registerUserIfNew(chatId);
-            return new MessageResponse(chatId, handler.handle("command.start.first_hello_message"));
+        OptionalAnswer<Void> answer = botService.registerUserIfNew(chatId);
+        if (answer != null && answer.isError()) {
+            return new MessageResponse(chatId, handler.handle("command.start.messages.success.hello_message"));
         } else {
-            return new MessageResponse(chatId, handler.handle("command.start.hello_message"));
+            return new MessageResponse(chatId, handler.handle("command.start.messages.success.first_hello_message"));
         }
     }
 }

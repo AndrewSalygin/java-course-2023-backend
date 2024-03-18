@@ -1,11 +1,13 @@
 package edu.java.bot.commands;
 
 import edu.java.bot.client.scrapper.dto.response.LinkResponse;
+import edu.java.bot.dto.OptionalAnswer;
 import edu.java.bot.service.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.util.URLChecker;
 import edu.java.bot.wrapper.Message;
 import edu.java.bot.wrapper.MessageResponse;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,12 +57,19 @@ public class UntrackCommand extends AbstractCommand {
     private String getAnswerForLink(String link, Long chatId) {
         if (!URLChecker.isURL(link)) {
             if (!link.isEmpty()) {
-                return String.format(handler.handle("message.invalid_argument"), link);
+                return handler.handle("message.invalid_argument", Map.of("argument", link));
             }
-        } else if (botService.isUserLinkTracked(chatId, link)) {
-            botService.unTrackUserLink(chatId, link);
-            return String.format(handler.handle("command.untrack.successful_untrack"), link);
         }
-        return String.format(handler.handle("command.untrack.not_tracked"), link);
+
+        OptionalAnswer<LinkResponse> answer = botService.unTrackUserLink(chatId, link);
+        if (answer != null) {
+            if (!answer.isError()) {
+                return handler.handle("command.untrack.messages.successful_untrack", Map.of("link", link));
+            } else {
+                return answer.apiErrorResponse().description();
+            }
+        } else {
+            return handler.handle("message.unknown_command");
+        }
     }
 }

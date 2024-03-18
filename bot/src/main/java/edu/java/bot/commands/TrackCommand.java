@@ -1,10 +1,13 @@
 package edu.java.bot.commands;
 
+import edu.java.bot.client.scrapper.dto.response.LinkResponse;
+import edu.java.bot.dto.OptionalAnswer;
 import edu.java.bot.service.BotService;
 import edu.java.bot.util.TextHandler;
 import edu.java.bot.util.URLChecker;
 import edu.java.bot.wrapper.Message;
 import edu.java.bot.wrapper.MessageResponse;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,10 +58,17 @@ public class TrackCommand extends AbstractCommand {
             if (!link.isEmpty()) {
                 return String.format(handler.handle("message.invalid_argument"), link);
             }
-        } else if (!botService.isUserLinkTracked(chatId, link)) {
-            botService.trackUserLink(chatId, link);
-            return String.format(handler.handle("command.track.successful_track"), link);
         }
-        return String.format(handler.handle("command.track.already_tracked"), link);
+        OptionalAnswer<LinkResponse> answer = botService.trackUserLink(chatId, link);
+        if (answer != null) {
+            if (!answer.isError()) {
+                return handler.handle("command.track.messages.successful_track", Map.of("link", link));
+            } else {
+                return answer.apiErrorResponse().description();
+            }
+        } else {
+            return handler.handle("message.unknown_command");
+        }
+
     }
 }

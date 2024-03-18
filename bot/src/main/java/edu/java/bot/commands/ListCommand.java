@@ -29,14 +29,16 @@ public class ListCommand extends AbstractCommand {
     @Override
     public MessageResponse handle(Message message) {
         Long chatId = message.chatId();
-        botService.registerUserIfNew(chatId);
-        if (botService.userLinks(chatId).links().isEmpty()) {
-            return new MessageResponse(chatId, handler.handle("command.list.empty"));
+        if (botService.userLinks(chatId).answer().links().isEmpty()) {
+            return new MessageResponse(chatId, handler.handle("command.list.messages.empty_list_of_links"));
         }
         StringBuilder linksString = new StringBuilder();
-        for (LinkResponse link : botService.userLinks(chatId).links()) {
-            linksString.append(link.url()).append("\n");
+        linksString.append(handler.handle("command.list.messages.show_tracked_links"));
+        int id = 1;
+        for (LinkResponse link : botService.userLinks(chatId).answer().links()) {
+            linksString.append(id).append(". ").append(link.url()).append("\n");
+            id++;
         }
-        return new MessageResponse(chatId, String.format(handler.handle("command.list.show"), linksString));
+        return new MessageResponse(chatId, String.valueOf(linksString));
     }
 }
