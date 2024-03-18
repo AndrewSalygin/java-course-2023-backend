@@ -1,6 +1,7 @@
 package edu.java.supplier.api;
 
 import java.net.URL;
+import java.time.OffsetDateTime;
 
 public interface InfoSupplier {
 
@@ -9,4 +10,6 @@ public interface InfoSupplier {
     boolean isSupported(URL url);
 
     String getTypeSupplier();
+
+    LinkInfo filterByDateTime(LinkInfo linkInfo, OffsetDateTime afterDateTime, String metaInfo);
 }

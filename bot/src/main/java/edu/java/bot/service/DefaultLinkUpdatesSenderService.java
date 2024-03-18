@@ -24,7 +24,12 @@ public class DefaultLinkUpdatesSenderService implements LinkUpdatesSenderService
         linkUpdate.tgChatIds().forEach(chatId -> telegramService.sendMessage(
             new MessageResponse(
                 chatId,
-                handler.handle("link.update", Map.of("link", String.valueOf(linkUpdate.url())))
+                handler.handle("link.update", Map.of("link", String.valueOf(linkUpdate.url()), "description",
+                    handler.handle(
+                        linkUpdate.description(),
+                        linkUpdate.metaInfo(),
+                        "Default update"
+                    )))
             ), ParseMode.Markdown));
     }
 }

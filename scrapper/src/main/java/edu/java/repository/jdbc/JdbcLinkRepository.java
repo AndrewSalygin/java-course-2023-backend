@@ -33,15 +33,16 @@ public class JdbcLinkRepository implements LinkRepository {
     public Long add(Link link) {
         return client.sql("""
                 INSERT INTO
-                  link(url, last_update, last_check)
+                  link(url, last_update, last_check, meta_info)
                 VALUES
-                  (:url, :last_update, :last_check)
+                  (:url, :last_update, :last_check, :meta_info)
                 ON CONFLICT (url)
-                DO UPDATE SET last_update = :last_update, last_check = :last_check
+                DO UPDATE SET last_update = :last_update, last_check = :last_check, meta_info = :meta_info
                 RETURNING link_id""")
             .param(URL, String.valueOf(link.url()))
             .param(LAST_UPDATE, link.lastUpdate())
             .param(LAST_CHECK, link.lastCheck())
+            .param("meta_info", link.metaInfo())
             .query(Long.class)
             .single();
     }

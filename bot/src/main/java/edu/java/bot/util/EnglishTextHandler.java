@@ -19,4 +19,13 @@ public class EnglishTextHandler implements TextHandler {
         String message = resourceBundleMessageSource.getMessage(option, null, Locale.of("eng"));
         return ReplacerValiables.replaceVariables(message, keyWords);
     }
+
+    @Override
+    public String handle(String option, Map<String, String> keyWords, String defaultValue) {
+        String handledMessage = handle(option, keyWords);
+        if (handledMessage.equals(option)) {
+            return defaultValue;
+        }
+        return handledMessage;
+    }
 }

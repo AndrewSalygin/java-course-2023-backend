@@ -9,13 +9,9 @@ import org.jetbrains.annotations.NotNull;
 public record LinkUpdate(
 
     @NotNull Long id,
-<<<<<<< HEAD
+
     @NotNull URL url,
-=======
 
-    @NotNull URL link,
-
->>>>>>> 5498748 (Start do hw5-bonus)
     @NotEmpty String description,
 
     @NotEmpty List<Long> tgChatIds,

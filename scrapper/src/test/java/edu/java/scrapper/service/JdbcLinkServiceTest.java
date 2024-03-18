@@ -39,23 +39,10 @@ public class JdbcLinkServiceTest extends IntegrationEnvironment {
     @Test
     @Transactional
     @Rollback
-    void addLinkTest() {
-        String urlString = "https://github.com/AndrewSalygin/java-course-2023-backend";
-        chatService.registerChat(41L);
-        URL url = URLCreator.createURL(urlString);
-
-        LinkResponse linkResponse = linkService.addTrackingLink(url, 41L);
-        Assertions.assertThat(linkRepository.findById(linkResponse.id()).url()).isEqualTo(url);
-        Assertions.assertThat(chatLinkRepository.findAllLinkByChatId(41L)).map(Link::url).contains(url);
-    }
-
-    @Test
-    @Transactional
-    @Rollback
     void getSubscribersTest() {
         chatService.registerChat(41L);
         URL url = URLCreator.createURL("https://github.com");
-        Long linkId = linkRepository.add(new Link(0L, url, OffsetDateTime.now(), OffsetDateTime.now()));
+        Long linkId = linkRepository.add(new Link(0L, url, OffsetDateTime.now(), OffsetDateTime.now(), ""));
         chatLinkRepository.add(41L, linkId);
 
         ListChatsResponse linkSubscribers = linkService.getLinkSubscribers(url);

@@ -25,8 +25,8 @@ public class JdbcLinkTest extends IntegrationEnvironment {
 
     @BeforeEach
     void setUp() {
-        link = new Link(0L, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.MAX);
-        link2 = new Link(0L, URLCreator.createURL("https://tinkoff.ru"), OffsetDateTime.MIN, OffsetDateTime.MAX);
+        link = new Link(0L, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.MAX, "");
+        link2 = new Link(0L, URLCreator.createURL("https://tinkoff.ru"), OffsetDateTime.MIN, OffsetDateTime.MAX, "");
     }
 
     @Test
@@ -63,12 +63,13 @@ public class JdbcLinkTest extends IntegrationEnvironment {
     @Transactional
     @Rollback
     void oldLinksTest() {
-        link = new Link(0L, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.now());
+        link = new Link(0L, URLCreator.createURL("https://google.com"), OffsetDateTime.MIN, OffsetDateTime.now(), "");
         link2 = new Link(
             0L,
             URLCreator.createURL("https://tinkoff.ru"),
             OffsetDateTime.MIN,
-            OffsetDateTime.now().minus(Duration.ofMinutes(60))
+            OffsetDateTime.now().minus(Duration.ofMinutes(60)),
+            ""
         );
         jdbcLinkRepository.add(link);
         jdbcLinkRepository.add(link2);

@@ -16,6 +16,6 @@ public record LinkUpdate(
 
     @NotEmpty List<Long> tgChatIds,
 
-    @NotEmpty Map<String, String> metaInfo
+    Map<String, String> metaInfo
 ) {
 }

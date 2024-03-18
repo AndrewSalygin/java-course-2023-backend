@@ -56,10 +56,20 @@ public class JdbcLinkService implements LinkService {
         }
 
         Long linkId;
-        if (linkInfo.lastUpdate() == null) {
-            linkId = linkRepository.add(new Link(1L, linkInfo.url(), OffsetDateTime.now(), OffsetDateTime.now()));
+        if (linkInfo.events().isEmpty()) {
+            linkId = linkRepository.add(new Link(1L,
+                linkInfo.url(),
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
+                linkInfo.metaInfo()
+            ));
         } else {
-            linkId = linkRepository.add(new Link(1L, linkInfo.url(), linkInfo.lastUpdate(), OffsetDateTime.now()));
+            linkId = linkRepository.add(new Link(1L,
+                linkInfo.url(),
+                linkInfo.events().getFirst().lastUpdate(),
+                OffsetDateTime.now(),
+                linkInfo.metaInfo()
+            ));
         }
         chatLinkRepository.add(tgChatId, linkId);
         return new LinkResponse(linkId, link);
@@ -88,7 +98,7 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     @Transactional
-    public void update(Long id, OffsetDateTime lastUpdate) {
+    public void update(Long id, OffsetDateTime lastUpdate, String metaInfo) {
         if (linkRepository.findById(id) == null) {
             throw new LinkNotFoundException(id);
         }
@@ -100,5 +110,10 @@ public class JdbcLinkService implements LinkService {
     public ListChatsResponse getLinkSubscribers(URL url) {
         List<Chat> chats = chatLinkRepository.findAllChatByLinkUrl(url);
         return new ListChatsResponse(chats, chats.size());
+    }
+
+    @Override
+    public void checkNow(Long aLong) {
+
     }
 }

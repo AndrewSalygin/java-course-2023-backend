@@ -37,4 +37,13 @@ message:
   invalid_argument: "Invalid argument: `%argument%`."
   empty_argument: "Empty argument."
 link:
-  update: "Updated link %link%."
+  update: "Link %link% - %description% has been updated"
+github:
+  push_event: "Added %size% commit(s)"
+  issue_comment_event: "Message added to issue/pull_request %title%"
+  issues_event: "Updated issue %title%"
+  pull_request_event: "Updated pull request %title%"
+  create_event: "Created %ref% (%ref_type%)"
+stackoverflow:
+  answers_event: "The answers to the question have been changed. This question was answered %count% times (s)"
+  score_event: "The rating of the question has been changed. New rating: %score%"
