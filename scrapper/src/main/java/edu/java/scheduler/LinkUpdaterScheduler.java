@@ -42,24 +42,24 @@ public class LinkUpdaterScheduler {
                 LinkInfo linkInfo = supplier.fetchInfo(link.url());
                 if (linkInfo != null) {
                     linkInfo = supplier.filterByDateTime(linkInfo, link.lastUpdate(), link.metaInfo());
-                }
 
-                if (linkInfo.events().isEmpty()) {
-                    linkService.checkNow(link.linkId());
-                    return;
+                    if (linkInfo.events().isEmpty()) {
+                        linkService.checkNow(link.linkId());
+                        return;
+                    }
+                    linkService.update(link.linkId(), linkInfo.events().getFirst().lastUpdate(), linkInfo.metaInfo());
+                    List<Long> subscribers = linkService.getLinkSubscribers(link.url()).chats().stream()
+                        .map(Chat::chatId)
+                        .toList();
+                    linkInfo.events().reversed().forEach(
+                        event -> botClient.handleUpdate(new LinkUpdate(
+                            link.linkId(),
+                            link.url(),
+                            event.typeEvent(),
+                            subscribers,
+                            event.eventData()
+                        )));
                 }
-                linkService.update(link.linkId(), linkInfo.events().getFirst().lastUpdate(), linkInfo.metaInfo());
-                List<Long> subscribers = linkService.getLinkSubscribers(link.url()).chats().stream()
-                    .map(Chat::chatId)
-                    .toList();
-                linkInfo.events().reversed().forEach(
-                    event -> botClient.handleUpdate(new LinkUpdate(
-                        link.linkId(),
-                        link.url(),
-                        event.typeEvent(),
-                        subscribers,
-                        event.eventData()
-                    )));
             });
         log.info("Updating links ends");
     }

@@ -13,7 +13,7 @@ public abstract class EventResolver<T> {
         this.eventMapConverters = new HashMap<>();
     }
 
-    public void registerCollector(String typeEvent, Function<T, LinkUpdateEvent> converter) {
+    public void registerConverter(String typeEvent, Function<T, LinkUpdateEvent> converter) {
         eventMapConverters.put(typeEvent, converter);
     }
 

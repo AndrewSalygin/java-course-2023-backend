@@ -17,6 +17,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,13 +79,14 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public LinkResponse deleteTrackingLink(URL url, Long tgChatId) {
-        Link link = linkRepository.findByUrl(url);
-        if (link != null) {
-            chatLinkRepository.remove(tgChatId, link.linkId());
-            if (chatLinkRepository.findAllChatByLinkId(link.linkId()).isEmpty()) {
-                linkRepository.remove(link.linkId());
+        Optional<Link> link = linkRepository.findByUrl(url);
+        if (link.isPresent()) {
+            long linkId = link.get().linkId();
+            chatLinkRepository.remove(tgChatId, linkId);
+            if (chatLinkRepository.findAllChatByLinkId(linkId).isEmpty()) {
+                linkRepository.remove(linkId);
             }
-            return new LinkResponse(link.linkId(), url);
+            return new LinkResponse(linkId, url);
         } else {
             throw new LinkNotFoundException(url);
         }
@@ -102,7 +104,7 @@ public class JdbcLinkService implements LinkService {
         if (linkRepository.findById(id) == null) {
             throw new LinkNotFoundException(id);
         }
-        linkRepository.update(id, lastUpdate);
+        linkRepository.update(id, lastUpdate, metaInfo);
     }
 
     @Override
@@ -113,7 +115,7 @@ public class JdbcLinkService implements LinkService {
     }
 
     @Override
-    public void checkNow(Long aLong) {
-
+    public void checkNow(Long id) {
+        linkRepository.checkNow(id);
     }
 }

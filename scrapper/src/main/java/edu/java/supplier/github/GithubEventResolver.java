@@ -9,7 +9,7 @@ import java.util.Map;
 public class GithubEventResolver extends EventResolver<GithubEventInfo> {
 
     public GithubEventResolver() {
-        registerCollector(
+        registerConverter(
             "PushEvent",
             item -> new LinkUpdateEvent(
                 "github.push_event",
@@ -17,7 +17,7 @@ public class GithubEventResolver extends EventResolver<GithubEventInfo> {
                 Map.of("size", String.valueOf(item.payload().size()))
             )
         );
-        registerCollector(
+        registerConverter(
             "IssuesEvent",
             item -> new LinkUpdateEvent(
                 "github.issues_event",
@@ -25,7 +25,7 @@ public class GithubEventResolver extends EventResolver<GithubEventInfo> {
                 Map.of("title", item.payload().issue().title())
             )
         );
-        registerCollector(
+        registerConverter(
             "PullRequestEvent",
             item -> new LinkUpdateEvent(
                 "github.pull_request_event",
@@ -33,7 +33,7 @@ public class GithubEventResolver extends EventResolver<GithubEventInfo> {
                 Map.of("title", item.payload().pullRequest().title())
             )
         );
-        registerCollector(
+        registerConverter(
             "CreateEvent",
             item -> new LinkUpdateEvent(
                 "github.create_event",

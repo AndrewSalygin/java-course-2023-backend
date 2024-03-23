@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class StackOverflowEventResolver extends EventResolver<StackOverflowItem> {
     public StackOverflowEventResolver() {
-        registerCollector(
+        registerConverter(
             "AnswerEvent",
             item -> new LinkUpdateEvent(
                 "stackoverflow.answers_event",
@@ -15,7 +15,7 @@ public class StackOverflowEventResolver extends EventResolver<StackOverflowItem>
                 Map.of("count", String.valueOf(item.answerCount()))
             )
         );
-        registerCollector(
+        registerConverter(
             "ScoreEvent",
             item -> new LinkUpdateEvent(
                 "stackoverflow.score_event",

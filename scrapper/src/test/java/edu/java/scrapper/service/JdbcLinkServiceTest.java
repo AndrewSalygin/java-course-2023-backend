@@ -2,7 +2,6 @@ package edu.java.scrapper.service;
 
 import edu.java.dto.Chat;
 import edu.java.dto.Link;
-import edu.java.dto.response.LinkResponse;
 import edu.java.dto.response.ListChatsResponse;
 import edu.java.exception.LinkNotFoundException;
 import edu.java.repository.jdbc.JdbcChatLinkRepository;
