@@ -17,6 +17,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,10 +57,20 @@ public class JdbcLinkService implements LinkService {
         }
 
         Long linkId;
-        if (linkInfo.lastUpdate() == null) {
-            linkId = linkRepository.add(new Link(1L, linkInfo.url(), OffsetDateTime.now(), OffsetDateTime.now()));
+        if (linkInfo.events().isEmpty()) {
+            linkId = linkRepository.add(new Link(1L,
+                linkInfo.url(),
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
+                linkInfo.metaInfo()
+            ));
         } else {
-            linkId = linkRepository.add(new Link(1L, linkInfo.url(), linkInfo.lastUpdate(), OffsetDateTime.now()));
+            linkId = linkRepository.add(new Link(1L,
+                linkInfo.url(),
+                linkInfo.events().getFirst().lastUpdate(),
+                OffsetDateTime.now(),
+                linkInfo.metaInfo()
+            ));
         }
         chatLinkRepository.add(tgChatId, linkId);
         return new LinkResponse(linkId, link);
@@ -68,13 +79,14 @@ public class JdbcLinkService implements LinkService {
     @Override
     @Transactional
     public LinkResponse deleteTrackingLink(URL url, Long tgChatId) {
-        Link link = linkRepository.findByUrl(url);
-        if (link != null) {
-            chatLinkRepository.remove(tgChatId, link.linkId());
-            if (chatLinkRepository.findAllChatByLinkId(link.linkId()).isEmpty()) {
-                linkRepository.remove(link.linkId());
+        Optional<Link> link = linkRepository.findByUrl(url);
+        if (link.isPresent()) {
+            long linkId = link.get().linkId();
+            chatLinkRepository.remove(tgChatId, linkId);
+            if (chatLinkRepository.findAllChatByLinkId(linkId).isEmpty()) {
+                linkRepository.remove(linkId);
             }
-            return new LinkResponse(link.linkId(), url);
+            return new LinkResponse(linkId, url);
         } else {
             throw new LinkNotFoundException(url);
         }
@@ -88,11 +100,11 @@ public class JdbcLinkService implements LinkService {
 
     @Override
     @Transactional
-    public void update(Long id, OffsetDateTime lastUpdate) {
+    public void update(Long id, OffsetDateTime lastUpdate, String metaInfo) {
         if (linkRepository.findById(id) == null) {
             throw new LinkNotFoundException(id);
         }
-        linkRepository.update(id, lastUpdate);
+        linkRepository.update(id, lastUpdate, metaInfo);
     }
 
     @Override
@@ -100,5 +112,10 @@ public class JdbcLinkService implements LinkService {
     public ListChatsResponse getLinkSubscribers(URL url) {
         List<Chat> chats = chatLinkRepository.findAllChatByLinkUrl(url);
         return new ListChatsResponse(chats, chats.size());
+    }
+
+    @Override
+    public void checkNow(Long id) {
+        linkRepository.checkNow(id);
     }
 }

@@ -13,7 +13,7 @@ public final class ReplacerValiables {
         for (Map.Entry<String, String> entry : keyWords.entrySet()) {
             String variable = VARIABLE_BOUNDARY + entry.getKey() + VARIABLE_BOUNDARY;
             String value = entry.getValue() != null ? entry.getValue() : "";
-            copyMessage = message.replace(variable, value);
+            copyMessage = copyMessage.replace(variable, value);
         }
         return copyMessage;
     }

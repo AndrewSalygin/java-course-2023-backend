@@ -3,8 +3,13 @@ package edu.java.supplier.github;
 import edu.java.configuration.ApplicationConfig;
 import edu.java.configuration.supplier.GithubConfig;
 import edu.java.supplier.api.LinkInfo;
+import edu.java.supplier.api.LinkUpdateEvent;
 import edu.java.supplier.api.WebClientInfoSupplier;
+import edu.java.supplier.github.data.GithubEventsCollector;
 import java.net.URL;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +20,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 public class GithubInfoSupplier extends WebClientInfoSupplier {
 
+    private static final int MAX_PER_UPDATE = 10;
+
     private static final String TYPE_SUPPLIER = "github";
+
+    private final GithubEventResolver eventResolver;
 
     private final Pattern repositoryPattern;
 
@@ -31,12 +40,14 @@ public class GithubInfoSupplier extends WebClientInfoSupplier {
             .build()
         );
         repositoryPattern = Pattern.compile(githubConfig.patterns().repository());
+        eventResolver = new GithubEventResolver();
     }
 
     public GithubInfoSupplier(
         GithubConfig githubConfig
     ) {
         super(githubConfig.url());
+        this.eventResolver = new GithubEventResolver();
         repositoryPattern = Pattern.compile(githubConfig.patterns().repository());
     }
 
@@ -46,14 +57,34 @@ public class GithubInfoSupplier extends WebClientInfoSupplier {
 
     @Override
     public LinkInfo fetchInfo(URL url) {
-        GithubRepoInfo info = null;
+        GithubEventsCollector eventsCollector = null;
         if (isSupported(url)) {
-            info = executeRequestGet("repos" + url.getPath(), GithubRepoInfo.class, GithubRepoInfo.EMPTY);
+            eventsCollector = executeRequestGet(
+                "repos" + url.getPath() + "/events?per_page=" + MAX_PER_UPDATE,
+                GithubEventsCollector.class,
+                GithubEventsCollector.EMPTY
+            );
         }
-        if (info == null) {
+        if (eventsCollector == null || eventsCollector.equals(GithubEventsCollector.EMPTY)
+            || eventsCollector.events().isEmpty()) {
             return null;
         }
-        return new LinkInfo(url, info.title(), info.lastUpdate());
+
+        String repositoryName = eventsCollector.events().getFirst().repo().name();
+
+        List<LinkUpdateEvent> linkUpdateEvents = eventsCollector.events().stream().map(it -> {
+            var converter = eventResolver.getConverter(it.type());
+            if (converter == null) {
+                return new LinkUpdateEvent(
+                    "github." + it.type().toLowerCase(),
+                    it.lastModified(),
+                    Map.of("type", it.type())
+                );
+            }
+            return eventResolver.getConverter(it.type()).apply(it);
+        }).toList();
+
+        return new LinkInfo(url, repositoryName, linkUpdateEvents, "");
     }
 
     @Override
@@ -69,4 +100,15 @@ public class GithubInfoSupplier extends WebClientInfoSupplier {
         return null;
     }
 
+    @Override
+    public LinkInfo filterByDateTime(LinkInfo linkInfo, OffsetDateTime afterDateTime, String context) {
+        List<LinkUpdateEvent> filteredUpdates =
+            linkInfo.events().stream().filter(event -> event.lastUpdate().isAfter(afterDateTime)).toList();
+        return new LinkInfo(
+            linkInfo.url(),
+            linkInfo.title(),
+            filteredUpdates,
+            ""
+        );
+    }
 }

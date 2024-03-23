@@ -1,5 +1,6 @@
 package edu.java.scrapper.supplier.stackoverflow;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import edu.java.configuration.supplier.GithubConfig;
 import edu.java.configuration.supplier.GithubPatternConfig;
@@ -9,7 +10,6 @@ import edu.java.supplier.api.LinkInfo;
 import edu.java.supplier.github.GithubInfoSupplier;
 import edu.java.supplier.stackoverflow.StackOverflowInfoSupplier;
 import java.net.URI;
-import java.time.OffsetDateTime;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -53,18 +53,17 @@ public class StackOverflowInfoSupplierTest {
         Mockito.when(stackOverflowPatternConfig.questions()).thenReturn("https://stackoverflow.com/questions/(\\d+).*");
         StackOverflowConfig config = new StackOverflowConfig(server.baseUrl(), stackOverflowPatternConfig);
 
-        StackOverflowInfoSupplier supplier = new StackOverflowInfoSupplier(config);
+        StackOverflowInfoSupplier supplier = new StackOverflowInfoSupplier(config, new ObjectMapper());
         LinkInfo info = supplier.fetchInfo(
             new URI(
                 "https://stackoverflow.com/questions/69228850/spring-boot-with-postgres-hikaripool-1-exception-during-pool-initializatio").toURL()
         );
         Assertions.assertThat(info)
-            .extracting(LinkInfo::url, LinkInfo::title, LinkInfo::lastUpdate)
+            .extracting(LinkInfo::url, LinkInfo::title)
             .contains(
                 new URI(
                     "https://stackoverflow.com/questions/69228850/spring-boot-with-postgres-hikaripool-1-exception-during-pool-initializatio").toURL(),
-                "Spring Boot with postgres --&gt; HikariPool-1 - Exception during pool initialization",
-                OffsetDateTime.parse("2021-09-17T20:06:53Z")
+                "Spring Boot with postgres --&gt; HikariPool-1 - Exception during pool initialization"
             );
     }
 
@@ -75,7 +74,7 @@ public class StackOverflowInfoSupplierTest {
         Mockito.when(stackOverflowPatternConfig.questions()).thenReturn("https://stackoverflow.com/wrongUrl/(\\d+).*");
         StackOverflowConfig config = new StackOverflowConfig(server.baseUrl(), stackOverflowPatternConfig);
 
-        StackOverflowInfoSupplier supplier = new StackOverflowInfoSupplier(config);
+        StackOverflowInfoSupplier supplier = new StackOverflowInfoSupplier(config, new ObjectMapper());
         LinkInfo info = supplier.fetchInfo(
             new URI("https://stackoverflow.com/questions/69228850/spring-boot-with-postgres-hikaripool-1-exception-during-pool-initializatio").toURL()
         );
@@ -93,12 +92,6 @@ public class StackOverflowInfoSupplierTest {
         LinkInfo info = supplier.fetchInfo(
             new URI("https://github.com/AndrewSalygin/test").toURL()
         );
-        Assertions.assertThat(info)
-            .extracting(LinkInfo::url, LinkInfo::title, LinkInfo::lastUpdate)
-            .contains(
-                new URI("https://github.com/AndrewSalygin/test").toURL(),
-                null,
-                null
-            );
+        Assertions.assertThat(info).isNull();
     }
 }

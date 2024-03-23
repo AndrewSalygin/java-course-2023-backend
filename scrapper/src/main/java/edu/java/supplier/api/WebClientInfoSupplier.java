@@ -1,5 +1,6 @@
 package edu.java.supplier.api;
 
+import java.time.OffsetDateTime;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -18,4 +19,6 @@ public abstract class WebClientInfoSupplier implements InfoSupplier {
         return webClient.get().uri(uri).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(type)
             .onErrorReturn(defaultValue).block();
     }
+
+    public abstract LinkInfo filterByDateTime(LinkInfo linkInfo, OffsetDateTime afterDateTime, String context);
 }

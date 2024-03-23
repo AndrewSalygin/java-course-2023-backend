@@ -1,7 +1,7 @@
 package edu.java.supplier.api;
 
 import java.net.URL;
-import java.time.OffsetDateTime;
+import java.util.List;
 
-public record LinkInfo(URL url, String title, OffsetDateTime lastUpdate) {
+public record LinkInfo(URL url, String title, List<LinkUpdateEvent> events, String metaInfo) {
 }

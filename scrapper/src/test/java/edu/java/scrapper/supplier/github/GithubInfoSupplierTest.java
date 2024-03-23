@@ -6,7 +6,6 @@ import edu.java.configuration.supplier.GithubPatternConfig;
 import edu.java.supplier.api.LinkInfo;
 import edu.java.supplier.github.GithubInfoSupplier;
 import java.net.URI;
-import java.time.OffsetDateTime;
 import lombok.SneakyThrows;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,6 +15,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static edu.java.scrapper.util.Utils.readAll;
 
 public class GithubInfoSupplierTest {
     private static WireMockServer server;
@@ -23,16 +23,11 @@ public class GithubInfoSupplierTest {
     @BeforeAll
     public static void setUp() {
         server = new WireMockServer(wireMockConfig().dynamicPort());
-        server.stubFor(get(urlPathMatching("/repos/AndrewSalygin/java-course-2023-backend"))
+        server.stubFor(get(urlPathMatching("/repos/AndrewSalygin/java-course-2023-backend/events"))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withHeader("Content-Type", "application/json")
-                .withBody("""
-                    {
-                        "full_name": "AndrewSalygin/java-course-2023-backend",
-                        "updated_at": "2024-02-25T07:35:50Z"
-                    }
-                    """)));
+                .withBody(readAll("/github-mock-answer.json"))));
         server.stubFor(get(urlPathMatching("/repos/test/test"))
             .willReturn(aResponse()
                 .withStatus(404)));
@@ -52,11 +47,10 @@ public class GithubInfoSupplierTest {
             new URI("https://github.com/AndrewSalygin/java-course-2023-backend").toURL()
         );
         Assertions.assertThat(info)
-            .extracting(LinkInfo::url, LinkInfo::title, LinkInfo::lastUpdate)
+            .extracting(LinkInfo::url, LinkInfo::title)
             .contains(
                 new URI("https://github.com/AndrewSalygin/java-course-2023-backend").toURL(),
-                "AndrewSalygin/java-course-2023-backend",
-                OffsetDateTime.parse("2024-02-25T07:35:50Z")
+                "AndrewSalygin/java-course-2023-backend"
             );
     }
 
@@ -87,12 +81,6 @@ public class GithubInfoSupplierTest {
         LinkInfo info = supplier.fetchInfo(
             new URI("https://github.com/AndrewSalygin/test/test").toURL()
         );
-        Assertions.assertThat(info)
-            .extracting(LinkInfo::url, LinkInfo::title, LinkInfo::lastUpdate)
-            .contains(
-                new URI("https://github.com/AndrewSalygin/test/test").toURL(),
-                null,
-                null
-            );
+        Assertions.assertThat(info).isNull();
     }
 }
