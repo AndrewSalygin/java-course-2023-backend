@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 public class JdbcLinkTest extends IntegrationEnvironment {
+
     @Autowired
     private JdbcLinkRepository jdbcLinkRepository;
 

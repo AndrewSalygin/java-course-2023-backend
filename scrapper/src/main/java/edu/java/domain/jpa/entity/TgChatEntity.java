@@ -10,13 +10,17 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "chat")
+@AllArgsConstructor
+@NoArgsConstructor
 public class TgChatEntity {
 
     @Id
@@ -29,15 +33,10 @@ public class TgChatEntity {
         joinColumns = {@JoinColumn(name = "chat_id")},
         inverseJoinColumns = {@JoinColumn(name = "link_id")}
     )
-    private Set<LinkEntity> links;
-
-    public TgChatEntity() {
-        this.links = new HashSet<>();
-    }
+    private Set<LinkEntity> links = new HashSet<>();
 
     public TgChatEntity(Long id) {
         this.id = id;
-        this.links = new HashSet<>();
     }
 
     public void addLink(LinkEntity link) {

@@ -13,13 +13,17 @@ import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "link")
+@AllArgsConstructor
+@NoArgsConstructor
 public class LinkEntity {
 
     @Id
@@ -39,11 +43,7 @@ public class LinkEntity {
     private String metaInfo;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "links")
-    private Set<TgChatEntity> tgChats;
-
-    public LinkEntity() {
-        tgChats = new HashSet<>();
-    }
+    private Set<TgChatEntity> tgChats = new HashSet<>();
 
     public LinkEntity(
         String url,
@@ -55,7 +55,6 @@ public class LinkEntity {
         this.lastUpdate = lastUpdate;
         this.lastCheck = lastCheck;
         this.metaInfo = metaInfo;
-        this.tgChats = new HashSet<>();
     }
 
     public Link toDto() {
